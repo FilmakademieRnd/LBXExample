@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="557,209" extention="Button">
+  <controller name="button" pages="0,up,1,down,2,over,3,selectedOver" selected="0"/>
+  <displayList>
+    <graph id="n5_u0q1" name="n5" xy="0,0" size="558,207" type="rect" lineSize="0" fillColor="#ff262626" corner="20"/>
+    <text id="n3_u0q1" name="title" xy="0,0" size="557,209" font="ui://33evrdndl6anc" fontSize="60" color="#bfbfbf" align="center" vAlign="middle" autoSize="none" singleLine="true" text="Text">
+      <gearColor controller="button" pages="1,2,3" values="#ffffff,#000000|#ffffff,#000000|#ffffff,#000000" default="#bfbfbf,#000000"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </text>
+  </displayList>
+  <Button/>
+</component>

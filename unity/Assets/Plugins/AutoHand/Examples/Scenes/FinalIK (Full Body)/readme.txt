@@ -1,0 +1,2 @@
+This package requires the FinalIK asset:
+https://assetstore.unity.com/packages/tools/animation/final-ik-14290?gclid=Cj0KCQiAmpyRBhC-ARIsABs2EApHCXO_6XW-sbQe-B1sW0SI4sNfS_K2kPIi5HBHBWt-1YYfEwf-SkoaAmIKEALw_wcB&gclsrc=aw.ds

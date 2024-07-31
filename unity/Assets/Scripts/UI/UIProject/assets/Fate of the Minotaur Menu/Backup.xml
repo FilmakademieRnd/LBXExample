@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="3602,2160">
+  <displayList>
+    <graph id="n0_c0j5" name="n0" xy="894,27" size="1768,1408" scale="1.5,1.5" type="rect" lineSize="0" fillColor="#ff323232" corner="20"/>
+    <graph id="n1_c0j5" name="n1" xy="49,27" size="626,1408" scale="1.5,1.5" type="rect" lineSize="0" fillColor="#ff262626" corner="20"/>
+    <text id="n20_c0j5" name="n20" xy="128,111" size="345,129" font="ui://33evrdndl6anc" fontSize="100" color="#ffffff" letterSpacing="2" text="Library"/>
+    <text id="n23_c0j5" name="n23" xy="132,250" size="341,79" font="ui://33evrdndl6ana" fontSize="60" color="#bfbfbf" letterSpacing="2" text="All Settings"/>
+    <component id="n24_c0j5" name="n24" src="c0j5s" fileName="Navigation Button.xml" xy="115,388">
+      <Button title="Play the Game"/>
+    </component>
+    <component id="n25_c0j5" name="n25" src="c0j5s" fileName="Navigation Button.xml" xy="115,518">
+      <Button title="Settings"/>
+    </component>
+    <component id="n26_c0j5" name="n26" src="c0j5s" fileName="Navigation Button.xml" xy="115,648">
+      <Button title="Credits"/>
+    </component>
+    <text id="n27_c0j5" name="n27" xy="1067,111" size="408,129" font="ui://33evrdndl6anc" fontSize="100" color="#ffffff" letterSpacing="2" text="Settings"/>
+    <text id="n28_c0j5" name="n28" xy="1081,313" size="289,79" group="n36_c0j5" font="ui://33evrdndl6anc" fontSize="60" color="#ffffff" letterSpacing="2" text="IP Adress"/>
+    <text id="n29_c0j5" name="n29" xy="1080,394" size="984,67" group="n36_c0j5" font="ui://33evrdndl6ana" fontSize="50" color="#e6e6e6" letterSpacing="2" text="Set IP Adress to connect in Multiplayer"/>
+    <graph id="n33_c0j5" name="n33" xy="2860,333" size="554,105" group="n34_c0j5" type="rect" fillColor="#ff262626" corner="50"/>
+    <text id="n32_c0j5" name="n32" xy="2904,344" size="466,86" group="n34_c0j5" font="ui://33evrdndl6ana" fontSize="50" color="#ffffff" align="center" vAlign="middle" autoSize="none" text="" input="true" prompt="192.168.0.22"/>
+    <group id="n34_c0j5" name="n34" xy="2860,333" size="554,105" group="n36_c0j5"/>
+    <group id="n36_c0j5" name="n36" xy="1080,313" size="2334,148"/>
+    <text id="n37_c0j5" name="n37" xy="1082,558" size="387,79" group="n42_c0j5" font="ui://33evrdndl6anc" fontSize="60" color="#ffffff" letterSpacing="2" text="Debug Mode"/>
+    <text id="n38_c0j5" name="n38" xy="1081,639" size="640,67" group="n42_c0j5" font="ui://33evrdndl6ana" fontSize="50" color="#e6e6e6" letterSpacing="2" text="Activate the debug mode"/>
+    <component id="n43_c0j5" name="n43" src="e0lnm" fileName="Button.xml" xy="3203,579" group="n42_c0j5"/>
+    <group id="n42_c0j5" name="n42" xy="1081,558" size="2332,148"/>
+    <text id="n44_c0j5" name="n44" xy="1082,809" size="639,79" group="n47_c0j5" font="ui://33evrdndl6anc" fontSize="60" color="#ffffff" letterSpacing="2" text="Controller Movement"/>
+    <text id="n45_c0j5" name="n45" xy="1081,890" size="763,67" group="n47_c0j5" font="ui://33evrdndl6ana" fontSize="50" color="#e6e6e6" letterSpacing="2" text="Move in game with controllers"/>
+    <component id="n46_c0j5" name="n46" src="e0lnm" fileName="Button.xml" xy="3204,829" group="n47_c0j5"/>
+    <group id="n47_c0j5" name="n47" xy="1081,809" size="2333,148"/>
+  </displayList>
+</component>

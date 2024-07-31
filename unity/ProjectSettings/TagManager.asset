@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Redo
+  - Hand
+  - Head
+  - Feet
+  - Weapon
+  - NetworkHead
+  - Balcony
+  - CC_Base_L_Calf
+  - CC_Base_R_Calf
+  - CC_Base_R_Thigh
+  - CC_Base_L_Thigh
+  - CC_Base_R_Upperarm
+  - CC_Base_L_Upperarm
+  - CC_Base_R_Forearm
+  - CC_Base_L_Forearm
+  - CC_Base_Head
+  - CC_Base_L_Spine01
+  - CC_Base_R_Spine01
+  - CC_Base_L_Spine02
+  - CC_Base_R_Spine02
+  - CC_Base_BoneRoot
+  - TorchIntensity
+  - SpectatorCamera
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Measure
+  - Chapter_4_Lighting
+  - Chapter_3_Lighting
+  - Chapter_2_Lighting
+  - Chapter_1_Lighting
+  - NetworkPhysics
+  - Segment
+  - Wall
+  - Player_Lighting
+  - BattlePlayerCollision
+  - 
+  - BattleWalls
+  - BattleWeapon
+  - 
+  - 
+  - 
+  - Enemy
+  - Platform
+  - GroundLayer
+  - HeadDome
+  - HandPlayer
+  - Hand
+  - Grabbable
+  - Grabbing
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

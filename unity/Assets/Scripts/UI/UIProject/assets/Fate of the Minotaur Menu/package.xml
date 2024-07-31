@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="i1i2ucwo">
+  <resources>
+    <component id="zl3wob" name="Backup.xml" path="/"/>
+    <component id="zl3woc" name="Button.xml" path="/"/>
+    <component id="zl3wod" name="Navigation Radio.xml" path="/"/>
+    <component id="zl3woe" name="PlayButton.xml" path="/"/>
+    <component id="zl3wof" name="Main.xml" path="/" exported="true"/>
+  </resources>
+  <publish name=""/>
+</packageDescription>
