@@ -28,6 +28,7 @@ if not go to https://opensource.org/licenses/MIT
 using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace tracer
 {
@@ -92,6 +93,10 @@ namespace tracer
         public Transform getTr{ get => tr; }
         
         
+        //### EVENTS
+        [HideInInspector] public UnityEvent onLockStateChanged;
+        //---
+
         //!
         //! Factory to create a new SceneObject and do it's initialisation.
         //! Use this function instead GameObject.AddComponen<>!
@@ -149,11 +154,12 @@ namespace tracer
             if (l){
                 sceneManager.LockSceneObject(this);
                 _lock = !l;
-                Debug.Log("locked: " + _lock + " for " + this.name);
+                //Debug.Log("locked: " + _lock + " for " + this.name);
             }else{
                 sceneManager.UnlockSceneObject(this);
-                Debug.Log("UNLOCK " + _lock + " for " + this.name);
+                //Debug.Log("UNLOCK " + _lock + " for " + this.name);
             }
+            onLockStateChanged?.Invoke();       //e.g. also lock physics
         }
 
         public virtual void SetLock(bool l)
@@ -166,10 +172,6 @@ namespace tracer
             _lock = l;
         }
 
-        public void ForcedMasterPositionUpdate(){
-            position.setValue(tr.position, false);
-            emitHasChanged(position);
-        }
 
         //!
         //! Function that emits the scene objects hasChanged event. (Used for parameter updates)

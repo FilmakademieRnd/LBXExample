@@ -93,7 +93,7 @@ namespace tracer
             playerRenderer.SetMaterials(new List<Material> { playerMaterial });
 
             //JITTER HOTFIX
-            InitJitterHotfix();
+            InitToUseParentingPosUpdates();
             position.hasChanged -= updatePosition;
 
         }

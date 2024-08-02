@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class MinoSpawnablesManager : SceneObjectMino{
     
-    public float debugSpawnRepeating = -1f;
-    public int debugSpawnIndex = -1;
+    public InteractableNetworkBehaviourEnum spawnNetworkBehaviour = InteractableNetworkBehaviourEnum.byMaster;
 
+    [Header("SPAWN")]
     public GameObject spawnParticle;
     public List<SceneObjectMino> spawnableUniqueObjects;
+
+    [Header("DEBUG")]
+    public float debugSpawnRepeating = -1f;
+    public int debugSpawnIndex = -1;
     private RPCParameter<Vector2> spawnIndexAndId;
 
     private float spawnTimer = -1f;
@@ -25,10 +29,36 @@ public class MinoSpawnablesManager : SceneObjectMino{
         if(index < 0 || index >= spawnableUniqueObjects.Count)
             return;
 
+        Debug.Log("Event::Spawn");
+        switch(spawnNetworkBehaviour){
+            case InteractableNetworkBehaviourEnum.byEveryone:
+            case InteractableNetworkBehaviourEnum.byEveryone4Everyone:
+                Debug.Log("..Spawn Here");
+                spawnIndexAndId.Call(
+                    new Vector2(index, MinoGameManager.Instance.AddObjectAndInit_Sender(spawnableUniqueObjects[index], GetSpawnPos())), 
+                    true
+                );
 
-        spawnIndexAndId.setValue(
-            new Vector2(index, MinoGameManager.Instance.AddObjectAndInit_Master(spawnableUniqueObjects[index], GetSpawnPos()) )
-        );
+                //the below was working, but re-work so it uses the same as in SceneObjectInteractable!
+
+                // spawnIndexAndId.setValue(
+                //     new Vector2(index, MinoGameManager.Instance.AddObjectAndInit_Sender(spawnableUniqueObjects[index], GetSpawnPos()) )
+                // );
+                break;
+            case InteractableNetworkBehaviourEnum.byMaster:
+                if(MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){
+                    //INITIATE SPAWN
+                    Debug.Log("..Spawn Here");
+                    spawnIndexAndId.setValue(
+                        new Vector2(index, MinoGameManager.Instance.AddObjectAndInit_Sender(spawnableUniqueObjects[index], GetSpawnPos()) )
+                    );
+                }else{
+                    //TELL MASTER THAT WE SHOULD SPAWN!
+                    Debug.Log("..Tell Master to Spawn");
+                    spawnIndexAndId.setValue(new Vector2(index, -1));
+                }
+                break;
+        }
         
         if(spawnParticle)
             Destroy( Instantiate(spawnParticle, transform.position, Quaternion.identity), 3f);
@@ -57,8 +87,28 @@ public class MinoSpawnablesManager : SceneObjectMino{
         if(_spawnIndexAndId.x < 0 || _spawnIndexAndId.x >= spawnableUniqueObjects.Count)
             return;
 
-        MinoGameManager.Instance.AddObjectAndInit_Client(spawnableUniqueObjects[(int)_spawnIndexAndId.x], (int)_spawnIndexAndId.y, GetSpawnPos());
-        if(spawnParticle)
-            Destroy( Instantiate(spawnParticle, transform.position, Quaternion.identity), 3f);
+        switch(spawnNetworkBehaviour){
+            case InteractableNetworkBehaviourEnum.byEveryone:
+            case InteractableNetworkBehaviourEnum.byEveryone4Everyone:
+                Debug.Log("..Spawn Here from elsewhere");
+                MinoGameManager.Instance.AddObjectAndInit_Receiver(spawnableUniqueObjects[(int)_spawnIndexAndId.x], (int)_spawnIndexAndId.y, GetSpawnPos());
+                if(spawnParticle)
+                    Destroy( Instantiate(spawnParticle, transform.position, Quaternion.identity), 3f);
+                break;
+            case InteractableNetworkBehaviourEnum.byMaster:
+                if(_spawnIndexAndId.y < 0){ //just a msg that the Master should spawn!
+                    if(MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){
+                        //SPAWN
+                        Debug.Log("..Told to Spawn from elsewhere");
+                        Event_SpawnAt((int)_spawnIndexAndId.x);
+                    }
+                }else{
+                    Debug.Log("..Spawn Here from elsewhere");
+                    MinoGameManager.Instance.AddObjectAndInit_Receiver(spawnableUniqueObjects[(int)_spawnIndexAndId.x], (int)_spawnIndexAndId.y, GetSpawnPos());
+                    if(spawnParticle)
+                        Destroy( Instantiate(spawnParticle, transform.position, Quaternion.identity), 3f);
+                }
+                break;
+        }
     }
 }

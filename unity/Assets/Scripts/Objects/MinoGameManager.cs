@@ -127,6 +127,8 @@ public class MinoGameManager: SceneObject
     public float callBecameMasterAfterInitSeconds = 5f;
     private bool becameMasterCalled = false;
     public int GetOurPlayerNumber(){ return networkClientList[0].playerNumber; }
+
+    public bool AreWeMaster(){ return becameMasterCalled; }
     
     public enum ClientConnectionStateEnum{
         notInited = 0,
@@ -849,27 +851,38 @@ public class MinoGameManager: SceneObject
         //skip not available guids (e.g. spectator has no starting player prefab)
     }
 
+    public int AddObjectAndInit_Sender(SceneObjectMino _toSpawn, Vector3 _spawnPos){
+        //SPAWN AND RETURN ID!
+        GameObject spawnGo = Instantiate(_toSpawn.gameObject, _spawnPos, Quaternion.identity);
+        SceneObjectMino so = spawnGo.GetComponent<SceneObjectMino>();
+        so.Init(254, (short)(ParameterObject.getSoID()+SOMID_START_OFFSET));
+        //no "need" to lock, since it does not exist on any other client
+        so.lockObjectLocal(false);
+        AddSOMID(so, so.id);
+        return so.id;
+    }
+
     //if an object is added, initialize it with these
-    public void AddObjectAndInit_Client(SceneObjectMino _toSpawn, int _id, Vector3 startPos){
+    public void AddObjectAndInit_Receiver(SceneObjectMino _toSpawn, int _id, Vector3 startPos){
         //have a persistent list of (scene object mino) objects that _could_ be initialized
         //if one player does so, send the new guid, its somid and the index of the list
         //instantiate the prefab/object and init it with the specific values
-        GameObject spawnGo = Instantiate(_toSpawn.gameObject);
+        GameObject spawnGo = Instantiate(_toSpawn.gameObject, startPos, Quaternion.identity);
         SceneObjectMino so = spawnGo.GetComponent<SceneObjectMino>();
         so.Init(254, (short)_id);
         so.lockObjectLocal(true);
         AddSOMID(so, so.id);
     }
 
-    public int AddObjectAndInit_Master(SceneObjectMino _toSpawn, Vector3 _spawnPos){
-        //SPAWN AND RETURN ID!
-        GameObject spawnGo = Instantiate(_toSpawn.gameObject, _spawnPos, Quaternion.identity);
-        SceneObjectMino so = spawnGo.GetComponent<SceneObjectMino>();
-        so.Init(254, (short)(ParameterObject.getSoID()+SOMID_START_OFFSET));
-        //no "need" to lock, since it does not exist on any other client
-        AddSOMID(so, so.id);
-        return so.id;
+    public void RemoveAndDeleteSOMID(int _somid){
+        KeyValuePair<short, SceneObjectMino> pair = allMinoSceneObjectWithID.First(x => x.Key == _somid);
+        if(pair.Value != null){
+            SceneObjectMino som = pair.Value;
+            allMinoSceneObjectWithID.Remove(pair.Key);
+            Destroy(som.gameObject);
+        }
     }
+
 
     //right now used for player itself and networkplayers
     public void AddSOMID(SceneObjectMino _sceneObjectMino, short _itsSomid){

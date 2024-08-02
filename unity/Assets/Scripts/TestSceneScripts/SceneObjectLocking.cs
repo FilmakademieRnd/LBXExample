@@ -10,12 +10,22 @@ public class SceneObjectLocking : MonoBehaviour{
     private bool isMasterCalled = false;
 
     void Start(){
-        //START LOCKED
-        foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>())
-            /*som.lockObject(true);*/som.lockObjectLocal(true);
+        //START LOCKED (despite we are the Master - can happen on later spawned objects!)
+        if(!MinoGameManager.Instance.AreWeMaster()){
+            foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>())
+                som.lockObjectLocal(true);    
+                //use the lockObject so we call the correct physical behaviours due to locking
+                //som.lockObject(false);
+                //... but its not ready at game start...
+        }else{
+            foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>())
+                som.lockObject(true);//som.lockObjectLocal(false); //we do not call lockObject(true), because it can be that we are a spawned object and that would result in an error
+
+            isMasterCalled = true;
+        }
 
         if(debugLockText)
-            debugLockText.text = "isMaster (not locked here) = "+isMasterCalled;
+            debugLockText.text = "isMaster/not locked \n"+isMasterCalled;
         MinoGameManager.Instance.onBecameMasterClient.AddListener(BecameMaster);
 
         InvokeRepeating("UpdateIfWeLostMaster", 5f, 2f);
@@ -26,7 +36,7 @@ public class SceneObjectLocking : MonoBehaviour{
             //we are locked, gain lock over everyone else
             isMasterCalled = true;
             if(debugLockText)
-                debugLockText.text = "isMaster (not locked here) = "+isMasterCalled;
+                debugLockText.text = "isMaster/not locked\n"+isMasterCalled;
             foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>())
                 som.lockObject(true);
         }
@@ -35,6 +45,6 @@ public class SceneObjectLocking : MonoBehaviour{
     public void UpdateIfWeLostMaster(){
         isMasterCalled = !GetComponentInChildren<SceneObjectMino>()._lock;  //check if one object is still not locked here
         if(debugLockText)
-            debugLockText.text = "isMaster (not locked here) = "+isMasterCalled;
+            debugLockText.text = "isMaster/not locked\n"+isMasterCalled;
     }
 }

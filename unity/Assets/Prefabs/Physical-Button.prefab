@@ -326,7 +326,7 @@ GameObject:
   - component: {fileID: 8567024811609681050}
   - component: {fileID: 8949866116109487348}
   m_Layer: 11
-  m_Name: Physcial-Button
+  m_Name: Physical-Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -384,8 +384,13 @@ MonoBehaviour:
     _distribute: 0
     _value: {x: 0, y: 0, z: 0}
     _initialValue: {x: 0, y: 0, z: 0}
+  onLockStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
   ourGUID: 
-  useThomasJitterFixHere: 0
+  adjustChildOnLockStateChanged: 0
+  adjustPhysicsToLockState: 0
+  sendPosViaParent: 0
   interactableNetworkBehaviour: 10
   neverMoves: 1
   onTriggeredEvent:
@@ -403,6 +408,14 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  offTriggeredEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  isActiveEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  debugSetTriggered: 0
+  debugSetUntriggered: 0
   trToMove: {fileID: 0}
 --- !u!1 &6185229098797366808
 GameObject:

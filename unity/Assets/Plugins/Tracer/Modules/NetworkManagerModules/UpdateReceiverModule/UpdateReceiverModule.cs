@@ -229,7 +229,10 @@ namespace tracer
                 short sceneObjectID = BitConverter.ToInt16(message, 4);
 
                 SceneObject sceneObject = m_sceneManager.getSceneObject(sceneID, sceneObjectID);
-                sceneObject.SetLock(lockState);
+                if(sceneObject)                         //if we spawn an object but its not yet initiated at the client, this could happen
+                    sceneObject.SetLock(lockState);
+                else
+                    UnityEngine.Debug.LogWarning("SceneObject for sceneObjectID not found: "+(int)sceneObjectID);   //maybe delay the lock?
             }
             // delay unlock message
             else
@@ -340,6 +343,7 @@ namespace tracer
                             if (parameterObject != null)
                             {
                                 parameterObject.parameterList[parameterID].deSerialize(message, start + 7);
+                                //parameterID could be out of bounds, if we spawn an object and update it, before its spawned on the client!
                                 paraObjectNotFound = false;
                             }
                             else

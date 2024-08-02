@@ -30,8 +30,6 @@ Syncronisation Server. They are licensed under the following terms:
 
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using NaughtyAttributes;
 using UnityEngine;
 
 namespace tracer
@@ -45,6 +43,18 @@ namespace tracer
 
         //NEW UID FOR SCENE INITIALISATION
         [HideInInspector] public string ourGUID = "";   //will be set via MinoGUICreator/CreateGUIDs within AssetMenu "Tools/Create GUIDs"
+
+        public bool adjustChildOnLockStateChanged = false;  //not nec if the object uses the "jitterhotfix"
+
+        public bool adjustPhysicsToLockState = true;    //if we are locked, switch of physics
+
+        public enum InteractableNetworkBehaviourEnum{
+            byEveryone = 0,             //never checks for its own lock
+            byEveryone4Everyone = 3,    //should emit its signal and everyone should execute stuff locally (and do not emit any position etc)
+            byMaster = 10               //only send updates if we are the master ( == we are not locked!)
+            
+            //byMasterClient = 20 //checks for MasterClient == client with lowest [player]nr
+        }
 
         //!
         //! Factory to create a new SceneObject and do it's initialisation.
@@ -84,14 +94,21 @@ namespace tracer
             position.hasChanged += updatePosition;
             rotation = new Parameter<Quaternion>(tr.rotation, "rotation", this);
             rotation.hasChanged += updateRotation;
-            scale = new Parameter<Vector3>(tr.localScale, "scale", this);
-            scale.hasChanged += updateScale;
+            //scale = new Parameter<Vector3>(tr.localScale, "scale", this);
+            //scale.hasChanged += updateScale;
             
-            if(useThomasJitterFixHere && !jitterHotFixedUsed){
-                InitJitterHotfix();
+            if(sendPosViaParent && !useParentingAndPosUpdates){
+                InitToUseParentingPosUpdates();
                 position.hasChanged -= updatePosition;
             }
 
+            if(adjustChildOnLockStateChanged)
+                onLockStateChanged.AddListener(AdjustChildrenLockState);
+            if(adjustPhysicsToLockState){
+                onLockStateChanged.AddListener(AdjustPhysicsToLockState);
+                //execute once at init!
+                AdjustPhysicsToLockState();
+            }
         }
 
         //!
@@ -101,7 +118,7 @@ namespace tracer
         {
             base.OnDestroy();
 
-            if(jitterHotFixedUsed)
+            if(useParentingAndPosUpdates)
                 currentNetworkData.hasChanged -= updateRootCharacterLocalPosAndParent;
 
             _core.removeParameterObject(this);
@@ -141,7 +158,7 @@ namespace tracer
         }
 
         protected override void Update(){
-            if(!jitterHotFixedUsed){
+            if(!useParentingAndPosUpdates){
                 if (!_lock){
                     if (tr.position != position.value){
                         position.setValue(tr.position, false);
@@ -174,9 +191,32 @@ namespace tracer
             emitHasChanged((AbstractParameter)sender);
         }
         
-        protected override void updateScale(object sender, Vector3 a)
-        {
-            
+        private void AdjustChildrenLockState(){ //only the client who gains master state, will call this on its children (will be send over network either way!)
+            if(_lock)
+                return;
+
+            foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>()){
+                if(som != this && !IsCharacterOrChild(som.gameObject)) //dont change lock on characters or child objects they hold!
+                    som.lockObject(true);
+            }
+        }
+
+        protected virtual void AdjustPhysicsToLockState(){
+            foreach(Rigidbody rg in GetComponentsInChildren<Rigidbody>()){
+                if(IsCharacterOrChild(rg.gameObject))
+                    continue;
+                if(_lock){
+                    rg.angularVelocity = Vector3.zero;
+                    rg.velocity = Vector3.zero;
+                    rg.isKinematic = true;
+                }else{
+                    rg.isKinematic = false;
+                }
+            }
+        }
+
+        private bool IsCharacterOrChild(GameObject g){
+            return g.GetComponentInParent<MinoCharacter>() != null;
         }
 
         #region SIGGRAPH HOTFIXES
@@ -234,11 +274,11 @@ namespace tracer
          ***********/
 
         [Header("Network Parenting")]
-        public bool useThomasJitterFixHere = false; //for parenting and the discard message!
+        public bool sendPosViaParent = false; //for parenting and the discard message!
 
         protected Parameter<Vector4> currentNetworkData;    //Vector3 + sceneObjectID (if -1, the localPos is worldPos)
 
-        private bool jitterHotFixedUsed = false;
+        private bool useParentingAndPosUpdates = false;
         private Vector4 nonAllocVector4 = new Vector4();
         private Transform ourCurrentParentTr = null;
         private SceneObjectMino ourCurrentParentSOM = null;
@@ -299,8 +339,8 @@ namespace tracer
         }
 
         //INIT THE HOTFIX
-        protected void InitJitterHotfix(){
-            if(jitterHotFixedUsed)
+        protected void InitToUseParentingPosUpdates(){
+            if(useParentingAndPosUpdates)
                 return;
                 
             if(MinoGameManager.SceneObjectsInitialized){
@@ -312,7 +352,7 @@ namespace tracer
                 //JUST SO THAT LOCKED OBJECTS DONT START AT (0,0,0)
                 networkDataWeReceived = tr.position;
                 
-                jitterHotFixedUsed = true;
+                useParentingAndPosUpdates = true;
             }else{
                 StartCoroutine(WaitForSceneObjectInitialisation());
             }
@@ -321,18 +361,18 @@ namespace tracer
         private IEnumerator WaitForSceneObjectInitialisation(){
             while(!MinoGameManager.SceneObjectsInitialized)
                 yield return null;
-            InitJitterHotfix();
+            InitToUseParentingPosUpdates();
         }
 
         protected void RemoveJitterHotfix(){
             //From OnDestroyEvent
-            if(jitterHotFixedUsed)
+            if(useParentingAndPosUpdates)
                 currentNetworkData.hasChanged -= updateRootCharacterLocalPosAndParent;
         }
 
         //USE THE HOTFIX
         protected void EmitNonLockedPosData(){
-            if(!jitterHotFixedUsed)    //ugly setup
+            if(!useParentingAndPosUpdates)    //ugly setup
                 return;
 
             tr.position = NeverBelowOrAboveParentPos(tr.position);
@@ -354,7 +394,7 @@ namespace tracer
         }
 
         public void EmitCurrentNetworkDataOnPlayerJoin(){
-            if(!jitterHotFixedUsed)
+            if(!useParentingAndPosUpdates)
                 return;
 
             //currentNetworkData.setValue(nonAllocVector4);
@@ -365,7 +405,7 @@ namespace tracer
 
         //nec because we use GetComponentInParent in SetParentAndGetSOMID neuerdings
         public void CheckParentByTeleport(){
-            if(!jitterHotFixedUsed)
+            if(!useParentingAndPosUpdates)
                 return;
 
             //when we teleport the platform, our parent does not explicitely change, but maybe their parent SOM

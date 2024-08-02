@@ -226,6 +226,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentingTarget: {fileID: 8414827883905838020}
+  excludePlayer: 0
+  useTrigger: 1
+  useCollision: 0
   tagsToAllow:
   - Head
 --- !u!65 &3922219297116191036
@@ -258,7 +261,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8414827883905838020}
-  - component: {fileID: 5470373117203868182}
+  - component: {fileID: 2754677184395794291}
   - component: {fileID: 2885404342590263672}
   - component: {fileID: 6293968806912258927}
   - component: {fileID: 216272042969151183}
@@ -287,7 +290,7 @@ Transform:
   - {fileID: 8741919011708215194}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5470373117203868182
+--- !u!114 &2754677184395794291
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -296,7 +299,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8388428259422492384}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3ceb210a7a1bcf4eb7e71e040b467a9, type: 3}
+  m_Script: {fileID: 11500000, guid: 34b8028967486e54c9427d579bdd01cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _lock: 0
@@ -320,14 +323,13 @@ MonoBehaviour:
     _distribute: 0
     _value: {x: 0, y: 0, z: 0}
     _initialValue: {x: 0, y: 0, z: 0}
-  ourGUID: TestPlatform270538
-  useThomasJitterFixHere: 0
-  m_triggerCollider: {fileID: 6293968806912258927}
-  unarmedOnly: 0
-  startMoving:
+  onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  callOnlyLocally: 1
+  ourGUID: 
+  adjustChildOnLockStateChanged: 0
+  adjustPhysicsToLockState: 0
+  sendPosViaParent: 0
 --- !u!114 &2885404342590263672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,6 +343,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentingTarget: {fileID: 0}
+  excludePlayer: 1
+  useTrigger: 0
+  useCollision: 1
   tagsToAllow: []
 --- !u!65 &6293968806912258927
 BoxCollider:

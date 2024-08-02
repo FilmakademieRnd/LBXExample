@@ -40,7 +40,7 @@ namespace tracer
             m_playerColorMateriels.Add(tr.FindDeepChild("Avatar_Body_01").GetComponent<SkinnedMeshRenderer>().material);
 
             //JITTER HOTFIX
-            InitJitterHotfix();
+            InitToUseParentingPosUpdates();
             position.hasChanged -= updatePosition;
         }
 

@@ -6,11 +6,6 @@ using UnityEngine.Events;
 
 public class SceneObjectInteractable : SceneObjectMino{
 
-    public enum InteractableNetworkBehaviourEnum{
-        byEveryone = 0,  //never checks for its own lock
-        byMaster = 10   //only send updates if we are the master
-    }
-
     public InteractableNetworkBehaviourEnum interactableNetworkBehaviour = InteractableNetworkBehaviourEnum.byMaster;
 
     public bool neverMoves = true;
@@ -42,28 +37,32 @@ public class SceneObjectInteractable : SceneObjectMino{
         }
 
         m_isTriggered = new RPCParameter<bool>(false, "isTriggered", this);
-        m_isTriggered.hasChanged += UpdateTrigger;   
+        m_isTriggered.hasChanged += HasChanged;   
         m_isTriggered.setCall(IsTriggered);
 
         coroMoveEvent = new UnityEvent<int>();
     }
 
-    private void UpdateTrigger(object sender, bool triggered){
+    private void HasChanged(object sender, bool triggered){  Debug.Log("hasChanged>>HasChanged");
         switch(interactableNetworkBehaviour){
             case InteractableNetworkBehaviourEnum.byMaster:
-                emitHasChanged((AbstractParameter)sender);
+                if(!MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){   //check _lock?
+                    emitHasChanged((AbstractParameter)sender);
+                }
                 break;
             case InteractableNetworkBehaviourEnum.byEveryone:
-                //dont emit, just execute (be aware that only events that will emit on their own should be triggered!)
-                IsTriggered(triggered);
+                //dont emit, just execute (be aware that only network-events that will emit on their own should be triggered, e.g. pos changes)
+                break;
+            case InteractableNetworkBehaviourEnum.byEveryone4Everyone:
+                emitHasChanged((AbstractParameter)sender);
                 break;
         }
     }
 
-    private void IsTriggered(bool triggered){
+    private void IsTriggered(bool triggered){   Debug.Log("setCall>>IsTriggered");
         switch(interactableNetworkBehaviour){
             case InteractableNetworkBehaviourEnum.byMaster:
-                if(_lock)
+                if(_lock || !MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer())
                     break;
                 if(triggered)
                     onTriggeredEvent?.Invoke();
@@ -71,6 +70,7 @@ public class SceneObjectInteractable : SceneObjectMino{
                     offTriggeredEvent?.Invoke();
                 break;
             case InteractableNetworkBehaviourEnum.byEveryone:
+            case InteractableNetworkBehaviourEnum.byEveryone4Everyone:
                 if(triggered)
                     onTriggeredEvent?.Invoke();
                 else
@@ -80,7 +80,6 @@ public class SceneObjectInteractable : SceneObjectMino{
     }
 
     private void IsActive(){
-        Debug.Log("IsActive Event is locally executed");
         isActiveEvent?.Invoke();
     }
 
@@ -102,8 +101,8 @@ public class SceneObjectInteractable : SceneObjectMino{
         }
     }
 
-    public void Event_SetIsTriggered(bool b){
-        //m_isTriggered.setValue(b);
+    public void Event_SetIsTriggered(bool b){       //will call hasChanged
+        Debug.Log("Call()");
         m_isTriggered.Call(b, true);
     }
 

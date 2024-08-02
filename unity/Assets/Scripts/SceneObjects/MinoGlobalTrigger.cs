@@ -27,10 +27,9 @@ public class MinoGlobalTrigger : MinoInteractable
 
         if (!reusable) return;
 
-        if (shouldResetGrababbleToOrigin && other.GetComponent<MinoGrabbable>()){
-            other.GetComponent<MinoGrabbable>().ResetToOrigin();
-            
-        }
+        // if (shouldResetGrababbleToOrigin && other.GetComponent<MinoGrabbable>()){
+        //     other.GetComponent<MinoGrabbable>().ResetToOrigin(); 
+        // }
     }
 
     public override void IsTriggered(bool triggered){

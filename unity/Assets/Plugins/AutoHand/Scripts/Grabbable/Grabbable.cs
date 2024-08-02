@@ -1,14 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using NaughtyAttributes;
 using UnityEditor;
 using UnityEngine.Serialization;
-using UnityEngine.XR;
-
 
 namespace Autohand {
     public enum HandGrabType {
@@ -312,7 +306,7 @@ namespace Autohand {
                 ForceHandsRelease();
             else{
                 //[TESTING] to avoid having a jittering grabbable (p1 grab, p2 steals, p1 steals again - jitter occurs): dont let them get a velocity
-                if(body){
+                if(body && !body.isKinematic){
                     body.velocity = Vector3.zero;
                     body.angularVelocity = Vector3.zero;
                 }
