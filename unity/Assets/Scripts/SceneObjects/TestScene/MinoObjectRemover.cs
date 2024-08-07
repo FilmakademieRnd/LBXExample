@@ -6,7 +6,7 @@ public class MinoObjectRemover : SceneObjectMino{
     
     public InteractableNetworkBehaviourEnum spawnNetworkBehaviour = InteractableNetworkBehaviourEnum.byMaster;
 
-    [Header("SPAWN")]
+    [Header("REMOVE")]
     public GameObject removeParticle;
     private RPCParameter<int> removeId;
 
@@ -14,81 +14,61 @@ public class MinoObjectRemover : SceneObjectMino{
     public override void Awake(){
         base.Awake();
 
-        removeId = new RPCParameter<int>(11, "spawnIndex", this);
-        // removeId.hasChanged += EmitRemoveRPC;
-        // removeId.setCall(ReceiveRemoveObject);
+        removeId = new RPCParameter<int>(11, "removeIndex", this);
+        removeId.hasChanged += EmitRemoveRPC;
+        removeId.setCall(ReceiveRemoveObject);
     }
 
     public void Event_RemoveID(int somid){
-        if(id < 0)
+        if(somid < 0)
             return;
 
-
-        //ADJUST TO MinoSpawnablesManager and after that, use here !
-
         Debug.Log("Event::Remove");
+
+        Vector3 removedAtPos = tr.position;
         switch(spawnNetworkBehaviour){
             case InteractableNetworkBehaviourEnum.byEveryone:
             case InteractableNetworkBehaviourEnum.byEveryone4Everyone:
                 Debug.Log("..Remove Here");
-                removeId.setValue(somid);
-                MinoGameManager.Instance.RemoveAndDeleteSOMID(somid);
+                removeId.Call(somid, false);
+                removedAtPos = MinoGameManager.Instance.RemoveAndDeleteSOMID(somid);
                 break;
             case InteractableNetworkBehaviourEnum.byMaster:
                 if(MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){
-                    //INITIATE SPAWN
-                    Debug.Log("..Remove Here");
-                    removeId.setValue(somid);
-                    MinoGameManager.Instance.RemoveAndDeleteSOMID(somid);
+                    Debug.Log("..Remove Here at Master");
+                    removeId.Call(somid, false);
+                    removedAtPos = MinoGameManager.Instance.RemoveAndDeleteSOMID(somid);
                 }else{
-                    //TELL MASTER THAT WE SHOULD SPAWN!
-                    Debug.Log("..Tell Master to Remove");
-                    //spawnIndexAndId.setValue(new Vector2(id, -1));
+                    //should tell master that he removes it
                 }
                 break;
         }
         
         if(removeParticle)
-            Destroy(Instantiate(removeParticle, transform.position, Quaternion.identity), 3f);
+            Destroy(Instantiate(removeParticle, removedAtPos, Quaternion.identity), 3f);
     }
 
 
 
     void OnTriggerEnter(Collider col){
+        //DONT DESTROY CHARACTERS
+        if(col.gameObject.GetComponentInParent<MinoCharacter>())
+            return;
+            
         if(col.gameObject.GetComponentInParent<SceneObjectMino>())
             Event_RemoveID(col.gameObject.GetComponentInParent<SceneObjectMino>().id);
     }
 
-    private void EmitSpawnRPC(object sender, Vector2 _spawnIndexAndId){
+    private void EmitRemoveRPC(object sender, int _removeId){
         emitHasChanged((AbstractParameter)sender);
     }
 
-    private void ReceiveSpawnObject(int _somid){
+    private void ReceiveRemoveObject(int _somid){
         if(_somid < 0)
             return;
 
-        switch(spawnNetworkBehaviour){
-            // case InteractableNetworkBehaviourEnum.byEveryone:
-            // case InteractableNetworkBehaviourEnum.byEveryone4Everyone:
-            //     Debug.Log("..Spawn Here from elsewhere");
-            //     MinoGameManager.Instance.AddObjectAndInit_Receiver(spawnableUniqueObjects[(int)_spawnIndexAndId.x], (int)_spawnIndexAndId.y, GetSpawnPos());
-            //     if(spawnParticle)
-            //         Destroy( Instantiate(spawnParticle, transform.position, Quaternion.identity), 3f);
-            //     break;
-            // case InteractableNetworkBehaviourEnum.byMaster:
-            //     if(_spawnIndexAndId.y < 0){ //just a msg that the Master should spawn!
-            //         if(MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){
-            //             //SPAWN
-            //             Debug.Log("..Told to Spawn from elsewhere");
-            //             Event_RemoveID((int)_spawnIndexAndId.x);
-            //         }
-            //     }else{
-            //         Debug.Log("..Spawn Here from elsewhere");
-            //         MinoGameManager.Instance.AddObjectAndInit_Receiver(spawnableUniqueObjects[(int)_spawnIndexAndId.x], (int)_spawnIndexAndId.y, GetSpawnPos());
-            //         if(spawnParticle)
-            //             Destroy( Instantiate(spawnParticle, transform.position, Quaternion.identity), 3f);
-            //     }
-            //     break;
-        }
+        Vector3 removedAtPos = MinoGameManager.Instance.RemoveAndDeleteSOMID(_somid);
+        if(removeParticle)
+            Destroy(Instantiate(removeParticle, removedAtPos, Quaternion.identity), 3f);
     }
 }

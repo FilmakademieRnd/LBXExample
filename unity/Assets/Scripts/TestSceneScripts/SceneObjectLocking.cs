@@ -25,7 +25,7 @@ public class SceneObjectLocking : MonoBehaviour{
         }
 
         if(debugLockText)
-            debugLockText.text = "isMaster/not locked \n"+isMasterCalled;
+            debugLockText.text = "isMaster/unlocked \n"+isMasterCalled;
         MinoGameManager.Instance.onBecameMasterClient.AddListener(BecameMaster);
 
         InvokeRepeating("UpdateIfWeLostMaster", 5f, 2f);
@@ -36,7 +36,7 @@ public class SceneObjectLocking : MonoBehaviour{
             //we are locked, gain lock over everyone else
             isMasterCalled = true;
             if(debugLockText)
-                debugLockText.text = "isMaster/not locked\n"+isMasterCalled;
+                debugLockText.text = "isMaster/unlocked\n"+isMasterCalled;
             foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>())
                 som.lockObject(true);
         }
@@ -45,6 +45,6 @@ public class SceneObjectLocking : MonoBehaviour{
     public void UpdateIfWeLostMaster(){
         isMasterCalled = !GetComponentInChildren<SceneObjectMino>()._lock;  //check if one object is still not locked here
         if(debugLockText)
-            debugLockText.text = "isMaster/not locked\n"+isMasterCalled;
+            debugLockText.text = "isMaster/unlocked\n"+isMasterCalled;
     }
 }

@@ -36,26 +36,21 @@ public class MinoSpawnablesManager : SceneObjectMino{
                 Debug.Log("..Spawn Here");
                 spawnIndexAndId.Call(
                     new Vector2(index, MinoGameManager.Instance.AddObjectAndInit_Sender(spawnableUniqueObjects[index], GetSpawnPos())), 
-                    true
+                    false
                 );
-
-                //the below was working, but re-work so it uses the same as in SceneObjectInteractable!
-
-                // spawnIndexAndId.setValue(
-                //     new Vector2(index, MinoGameManager.Instance.AddObjectAndInit_Sender(spawnableUniqueObjects[index], GetSpawnPos()) )
-                // );
                 break;
             case InteractableNetworkBehaviourEnum.byMaster:
                 if(MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){
                     //INITIATE SPAWN
                     Debug.Log("..Spawn Here");
-                    spawnIndexAndId.setValue(
-                        new Vector2(index, MinoGameManager.Instance.AddObjectAndInit_Sender(spawnableUniqueObjects[index], GetSpawnPos()) )
+                    spawnIndexAndId.Call(
+                        new Vector2(index, MinoGameManager.Instance.AddObjectAndInit_Sender(spawnableUniqueObjects[index], GetSpawnPos())),
+                        false
                     );
                 }else{
                     //TELL MASTER THAT WE SHOULD SPAWN!
                     Debug.Log("..Tell Master to Spawn");
-                    spawnIndexAndId.setValue(new Vector2(index, -1));
+                    spawnIndexAndId.Call(new Vector2(index, -1), false);
                 }
                 break;
         }
@@ -99,8 +94,12 @@ public class MinoSpawnablesManager : SceneObjectMino{
                 if(_spawnIndexAndId.y < 0){ //just a msg that the Master should spawn!
                     if(MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){
                         //SPAWN
-                        Debug.Log("..Told to Spawn from elsewhere");
-                        Event_SpawnAt((int)_spawnIndexAndId.x);
+                        Debug.Log("..told Master to Spawn here from elsewhere");
+                        int index = (int)_spawnIndexAndId.x;
+                        spawnIndexAndId.Call(
+                            new Vector2(index, MinoGameManager.Instance.AddObjectAndInit_Sender(spawnableUniqueObjects[index], GetSpawnPos())),
+                            false
+                        );
                     }
                 }else{
                     Debug.Log("..Spawn Here from elsewhere");

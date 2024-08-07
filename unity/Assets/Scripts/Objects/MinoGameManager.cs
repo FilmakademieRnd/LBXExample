@@ -872,15 +872,21 @@ public class MinoGameManager: SceneObject
         so.Init(254, (short)_id);
         so.lockObjectLocal(true);
         AddSOMID(so, so.id);
+
+        //also we need to update the static value in case we will spawn an object
+        ParameterObject.increaseSoID();
     }
 
-    public void RemoveAndDeleteSOMID(int _somid){
+    public Vector3 RemoveAndDeleteSOMID(int _somid){
         KeyValuePair<short, SceneObjectMino> pair = allMinoSceneObjectWithID.First(x => x.Key == _somid);
         if(pair.Value != null){
             SceneObjectMino som = pair.Value;
             allMinoSceneObjectWithID.Remove(pair.Key);
+            Vector3 objPos = som.transform.position;
             Destroy(som.gameObject);
+            return objPos;
         }
+        return Vector3.zero;
     }
 
 

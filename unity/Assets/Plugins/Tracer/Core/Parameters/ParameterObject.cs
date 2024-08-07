@@ -158,6 +158,9 @@ namespace tracer
             return s_id++;
         }
 
+        //! if another object is spawned from another client, we need to update this var as well!
+        protected static void increaseSoID(){ s_id++; }
+
         public static bool Output_Log = true;
 
         protected void LogInitialisation(System.Reflection.MethodBase functionWeCallFrom, string msg){

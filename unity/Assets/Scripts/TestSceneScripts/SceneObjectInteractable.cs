@@ -43,7 +43,8 @@ public class SceneObjectInteractable : SceneObjectMino{
         coroMoveEvent = new UnityEvent<int>();
     }
 
-    private void HasChanged(object sender, bool triggered){  Debug.Log("hasChanged>>HasChanged");
+    private void HasChanged(object sender, bool triggered){  
+        Debug.Log("hasChanged>>HasChanged()");
         switch(interactableNetworkBehaviour){
             case InteractableNetworkBehaviourEnum.byMaster:
                 if(!MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){   //check _lock?
@@ -59,7 +60,8 @@ public class SceneObjectInteractable : SceneObjectMino{
         }
     }
 
-    private void IsTriggered(bool triggered){   Debug.Log("setCall>>IsTriggered");
+    private void IsTriggered(bool triggered){   
+        Debug.Log("Call()>>IsTriggered()");
         switch(interactableNetworkBehaviour){
             case InteractableNetworkBehaviourEnum.byMaster:
                 if(_lock || !MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer())
