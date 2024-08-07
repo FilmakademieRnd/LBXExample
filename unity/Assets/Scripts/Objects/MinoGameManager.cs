@@ -845,7 +845,7 @@ public class MinoGameManager: SceneObject
     }
 
     //not implemented yet
-    //receive this from player nr 1 after we'Ve connected and initialized
+    //receive this from player nr 1 after we've connected and initialized
     public void UpdateSOMIDsViaGUID(Dictionary<string, short> guidSomIds){
         //update ids if guid string matches
         //skip not available guids (e.g. spectator has no starting player prefab)
@@ -878,10 +878,8 @@ public class MinoGameManager: SceneObject
     }
 
     public Vector3 RemoveAndDeleteSOMID(int _somid){
-        KeyValuePair<short, SceneObjectMino> pair = allMinoSceneObjectWithID.First(x => x.Key == _somid);
-        if(pair.Value != null){
-            SceneObjectMino som = pair.Value;
-            allMinoSceneObjectWithID.Remove(pair.Key);
+        if(allMinoSceneObjectWithID.TryGetValue((short)_somid, out SceneObjectMino som)){
+            allMinoSceneObjectWithID.Remove((short)_somid);
             Vector3 objPos = som.transform.position;
             Destroy(som.gameObject);
             return objPos;
