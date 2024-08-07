@@ -35,7 +35,7 @@ namespace tracer{
         private void UpdatePlayerColorsIngame(){
             Color detailColor = MinoGameManager.Instance.colors[Mathf.Clamp(playerNumber, 0, MinoGameManager.Instance.colors.Length)];
             foreach(MeshRenderer mr in GetComponentsInChildren<MeshRenderer>())
-                mr.material.SetColor("_BaseColor", detailColor);
+                mr.material.color = detailColor;
         }
 
         //protected override void Update(){

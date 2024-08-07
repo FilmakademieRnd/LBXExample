@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using tracer;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using Quaternion = UnityEngine.Quaternion;
@@ -17,14 +16,6 @@ public class MinoGameManager: SceneObject
     public bool logNetworkCalls = true;     //implemented to debug the Player join behaviour
     public bool logInitCalls = true;        //implemented to debug all objects init process
     public TextMesh debugLogIngameText;
-    public List<LogType> debugLogTypesToShowIngame = new();
-
-    public static bool Ingame_Debug = false;
-
-    private RPCParameter<int> m_Debug;
-    private int debugCount = 0;
-    private int oldDebugCount = 0;
-
 
     //GameManager Singleton
     public static MinoGameManager Instance { get; private set; }
@@ -39,7 +30,9 @@ public class MinoGameManager: SceneObject
 
     private NetworkManager m_networkManager;
 
-    public MinoCharacter m_playerCharacter = null;
+
+    private MinoCharacter m_playerCharacter = null;
+    public MinoCharacter GetPlayer(){ return m_playerCharacter; }
 
     public SortedDictionary<short, MinoCharacter> m_networkCharacters;
     
@@ -55,8 +48,8 @@ public class MinoGameManager: SceneObject
     private byte m_deleteNetworkCharacter = 0;
 
     #region PLAYER_JOIN
-    public UnityEvent<int> onPlayerNumberUpdated;
-    public UnityEvent onBecameMasterClient;
+    [HideInInspector] public UnityEvent<int> onPlayerNumberUpdated;
+    [HideInInspector] public UnityEvent onBecameMasterClient;
 
     public float callBecameMasterAfterInitSeconds = 5f;
     private bool becameMasterCalled = false;
@@ -111,7 +104,7 @@ public class MinoGameManager: SceneObject
     }
 
     private List<NetworkClientDataClass> networkClientList = new(); //first element are ourself!    
-    private RPCParameter<UnityEngine.Vector2> m_sayHello;           //simply say hello with our network id and whether we are the specator to all
+    private RPCParameter<Vector2> m_sayHello;           //simply say hello with our network id and whether we are the specator to all
     private RPCParameter<Vector3> m_replyImHere;                    //reply to hello with our network id, our player # and whether we are a specator
     private RPCParameter<Vector3> m_replyIveChanged;                //network id, our # changed and if we are spec, so tell all others
     
@@ -322,27 +315,14 @@ public class MinoGameManager: SceneObject
         m_networkManager.networkReady += Init;
         m_networkManager.clientLost += OnClientLost;
 
-        m_Debug = new RPCParameter<int>(debugCount, "Debug", this);
-        m_Debug.hasChanged += UpdateRPC;
-        m_Debug.setCall(CallDebug);
-
         connectionState = ClientConnectionStateEnum.inited;
-    }
-
-    private void CallDebug(int obj)
-    {
-        if(obj - oldDebugCount > 1)
-            Debug.Log("DebugCount: " + obj + " -> PACKAGE LOST!");
-
-        oldDebugCount = obj;
-
     }
 
     public override void OnDestroy()
     {
         base.OnDestroy();
 
-        if(Debug.isDebugBuild || MinoGameManager.Ingame_Debug){
+        if(Debug.isDebugBuild){
             Application.logMessageReceived -= LogDebuMsgsToIngame;
         }
 
@@ -357,7 +337,7 @@ public class MinoGameManager: SceneObject
     }
 
     private void Init(object o, EventArgs e){
-        if(Debug.isDebugBuild || MinoGameManager.Ingame_Debug){
+        if(Debug.isDebugBuild){
             Application.logMessageReceived += LogDebuMsgsToIngame;
         }
 
@@ -568,7 +548,7 @@ public class MinoGameManager: SceneObject
     }
 
     public void LogDebuMsgsToIngame(string txt, string stackTrace, LogType type){
-        if((Debug.isDebugBuild || MinoGameManager.Ingame_Debug) && debugLogIngameText && (debugLogTypesToShowIngame.Count == 0 || debugLogTypesToShowIngame.Contains(type))){
+        if(Debug.isDebugBuild && debugLogIngameText){
             if(debugLogIngameText.text.Length+txt.Length > 15000)
                 CleanDebugText();
             if(txt.Length > 15000){
