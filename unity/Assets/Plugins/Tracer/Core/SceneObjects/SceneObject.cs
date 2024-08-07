@@ -131,8 +131,6 @@ namespace tracer
             scale = new Parameter<Vector3>(tr.localScale, "scale", this);
             scale.hasChanged += updateScale;
 
-            //if(startAndStayLockedLocally)
-            //    lockObjectLocal(true);
         }
 
         //!
@@ -159,7 +157,6 @@ namespace tracer
                 sceneManager.UnlockSceneObject(this);
                 //Debug.Log("UNLOCK " + _lock + " for " + this.name);
             }
-            onLockStateChanged?.Invoke();       //e.g. also lock physics
         }
 
         public virtual void SetLock(bool l)
@@ -222,12 +219,8 @@ namespace tracer
         //!
         //! Update is called once per frame
         //!
-        protected virtual void Update()
-        {
-
-//#if UNITY_EDITOR
+        protected virtual void Update(){
             updateSceneObjectTransform();
-//#endif
         }
         //!
         //! updates the scene objects transforms and informs all connected parameters about the change

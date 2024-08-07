@@ -56,6 +56,8 @@ namespace tracer
             //byMasterClient = 20 //checks for MasterClient == client with lowest [player]nr
         }
 
+        private bool lockStateWas = true;
+
         //!
         //! Factory to create a new SceneObject and do it's initialisation.
         //! Use this function instead GameObject.AddComponen<>!
@@ -176,6 +178,11 @@ namespace tracer
                     ApplyNetworkPosDataOnLocked();
                 }
             }
+
+            if(_lock != lockStateWas){              //cannot be called from SetLock and lockObject only gets called when called from the locking-client-object
+                onLockStateChanged?.Invoke();       //e.g. also lock physics
+                lockStateWas = _lock;
+            }
         }
         
         
@@ -205,10 +212,12 @@ namespace tracer
                 if(IsCharacter(rg.gameObject))
                     continue;
                 if(_lock){
+                    Debug.Log("SET KINEMATIC");
                     rg.angularVelocity = Vector3.zero;
                     rg.velocity = Vector3.zero;
                     rg.isKinematic = true;
                 }else{
+                    Debug.Log("SET PHYSICAL");
                     rg.isKinematic = false;
                 }
             }
