@@ -172,8 +172,7 @@ namespace tracer
             }else{
                 if (!_lock){
                     EmitNonLockedPosData();
-                }//should automatically be called via our hasChangedFunction
-                else{
+                }else{
                     ApplyNetworkPosDataOnLocked();
                 }
             }
@@ -196,14 +195,14 @@ namespace tracer
                 return;
 
             foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>()){
-                if(som != this && !IsCharacterOrChild(som.gameObject)) //dont change lock on characters or child objects they hold!
+                if(som != this && !IsCharacter(som.gameObject)) //dont change lock on characters or child objects they hold!
                     som.lockObject(true);
             }
         }
 
         protected virtual void AdjustPhysicsToLockState(){
             foreach(Rigidbody rg in GetComponentsInChildren<Rigidbody>()){
-                if(IsCharacterOrChild(rg.gameObject))
+                if(IsCharacter(rg.gameObject))
                     continue;
                 if(_lock){
                     rg.angularVelocity = Vector3.zero;
@@ -215,45 +214,9 @@ namespace tracer
             }
         }
 
-        private bool IsCharacterOrChild(GameObject g){
+        private bool IsCharacter(GameObject g){
             return g.GetComponentInParent<MinoCharacter>() != null;
         }
-
-        #region SIGGRAPH HOTFIXES
-
-        public void ExecuteNeverBelowOrAboveParentCheck(){
-            NeverBelowOrAboveParentPos(tr.position);
-        }
-
-        private Vector3 NeverBelowOrAboveParentPos(Vector3 pos){
-            //ONLY FOR SCENEOBJECTMINO AND CHARACTERS!
-            if(this.GetType() == typeof(MinoPlayerCharacter) && tr.parent != null && tr.parent.GetComponent<SceneObjectMino>()){
-                float parentY = tr.parent.position.y;
-                if(Mathf.Abs(parentY-pos.y) > 0.2f){
-                    pos.y = parentY;
-                }
-            }
-            return pos;
-        }
-
-        public void StartPlatformParentCheck(){
-            usePlatformParentCheck = true;
-            StartCoroutine(DoPlatformParentCheck());
-        }
-        public void StopPlatformParentCheck(){
-            usePlatformParentCheck = false;
-        }
-
-        private bool usePlatformParentCheck = false;
-
-        private IEnumerator DoPlatformParentCheck(){
-            MinoPlatformManager mpf = Object.FindObjectOfType<MinoPlatformManager>();
-            while(usePlatformParentCheck){
-                mpf.ParentPlayersToNearestPlatform();
-                yield return new WaitForSeconds(0.25f);
-            }
-        }
-        #endregion
 
         #region NETWORK_PARENTING
         //kind of jitter hotfix, so we send local data if we ware parented to any sceneobjectmino
@@ -288,7 +251,7 @@ namespace tracer
         //do not update if not!
         private bool receivedDataOnce = false;
 
-        private const bool DISCARD_POSITION_RUNAWAYS = false;
+        private const bool DISCARD_POSITION_RUNAWAYS = true;
         private const float DISCARD_DISTANCE = 3f;
         private const int DISCARD_CHECKLIST_LENGTH = 10;
         private const int IGNORE_DISCARDS_IF_MORE_THAN_X_IN_ROW = 10;   //if we get more than these discards in row without a sync, than sync either way!
@@ -344,7 +307,6 @@ namespace tracer
                 return;
                 
             if(MinoGameManager.SceneObjectsInitialized){
-                tr.position = NeverBelowOrAboveParentPos(tr.position);
                 CalculateNetworkData(tr);
                 currentNetworkData = new Parameter<Vector4>(nonAllocVector4, "rootCharacterLocalPosAndParent", this);
                 currentNetworkData.hasChanged += updateRootCharacterLocalPosAndParent;
@@ -375,7 +337,6 @@ namespace tracer
             if(!useParentingAndPosUpdates)    //ugly setup
                 return;
 
-            tr.position = NeverBelowOrAboveParentPos(tr.position);
             CalculateNetworkData(tr);
 
             if (currentNetworkData.value != nonAllocVector4){

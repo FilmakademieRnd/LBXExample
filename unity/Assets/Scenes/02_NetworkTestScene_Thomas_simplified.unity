@@ -908,6 +908,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06369052e160e6c498e7d016e3e38122, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  active: 0
   indicator: {fileID: 0}
   player: {fileID: 0}
   dur: 5
@@ -915,6 +916,7 @@ MonoBehaviour:
   calibrationDone:
     m_PersistentCalls:
       m_Calls: []
+    m_CallsDirty: 1
 --- !u!1 &88603717
 GameObject:
   m_ObjectHideFlags: 0
@@ -6315,50 +6317,88 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db00007d156f0f6419fd7e154e327721, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 0
+  _sceneID: 254
   _lock: 0
+  m_highlightLock: 0
+  _physicsActive: 0
   _gizmo: {fileID: 0}
   _icon: {fileID: 0}
   position:
     _name: 
     _type: 0
+    _parent: {fileID: 0}
+    _id: 0
     _distribute: 0
+    _networkLock: 0
+    _rpc: 0
     _value: {x: 0, y: 0, z: 0}
     _initialValue: {x: 0, y: 0, z: 0}
+    _dataSize: 0
   rotation:
     _name: 
     _type: 0
+    _parent: {fileID: 0}
+    _id: 0
     _distribute: 0
+    _networkLock: 0
+    _rpc: 0
     _value: {x: 0, y: 0, z: 0, w: 0}
     _initialValue: {x: 0, y: 0, z: 0, w: 0}
+    _dataSize: 0
   scale:
     _name: 
     _type: 0
+    _parent: {fileID: 0}
+    _id: 0
     _distribute: 0
+    _networkLock: 0
+    _rpc: 0
     _value: {x: 0, y: 0, z: 0}
     _initialValue: {x: 0, y: 0, z: 0}
+    _dataSize: 0
+  tr: {fileID: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
+    m_CallsDirty: 1
   ourGUID: Directional Light 1233018
   adjustChildOnLockStateChanged: 0
   adjustPhysicsToLockState: 1
+  usePlatformParentCheck: 0
   sendPosViaParent: 0
+  currentNetworkData:
+    _name: 
+    _type: 0
+    _parent: {fileID: 0}
+    _id: 0
+    _distribute: 0
+    _networkLock: 0
+    _rpc: 0
+    _value: {x: 0, y: 0, z: 0, w: 0}
+    _initialValue: {x: 0, y: 0, z: 0, w: 0}
+    _dataSize: 0
+  useParentingAndPosUpdates: 0
+  nonAllocVector4: {x: 0, y: 0, z: 0, w: 0}
+  ourCurrentParentTr: {fileID: 0}
+  ourCurrentParentSOM: {fileID: 0}
+  currentSOMID: -1
+  networkDataWeReceived: {x: 0, y: 0, z: 0, w: 0}
+  receivedDataOnce: 0
+  discardCheckPositionList: []
+  discardPositionListSum: {x: 0, y: 0, z: 0}
+  discardsInRow: 0
   m_triggerCollider: {fileID: 0}
+  m_collidedSceneObjects: []
+  isTriggered: 0
+  m_collidedPlayerAmount: 0
   triggerEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 620602653}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: FadeOut
-          m_BoolArgument: 0
-        m_CallState: 1
+      - {m_Target: {fileID: 620602653}, m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine, m_MethodName: SetTrigger, m_Mode: 5, m_Arguments: {m_ObjectArgument: {fileID: 0},
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, m_IntArgument: 0,
+          m_FloatArgument: 0, m_StringArgument: FadeOut, m_BoolArgument: 0}, m_CallState: 1}
+    m_CallsDirty: 1
   isUsed: 0
   reusable: 0
 --- !u!95 &620602653
@@ -12484,31 +12524,12 @@ MonoBehaviour:
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  showPlayerColorsInPlaymodeTint: 1
   logNetworkCalls: 1
   logInitCalls: 1
   debugLogIngameText: {fileID: 0}
   debugLogTypesToShowIngame: 
-  isDebugServer: 0
-  tracerCore: {fileID: 903756074}
-  minoSpectator: {fileID: 7983911926705204226, guid: 64736f4afc08fcb49a3615c3119267d8,
+  minoPlayerCharacter: {fileID: 4799565603038598537, guid: 9886f6fac6a329d438c3dda6a0843765,
     type: 3}
-  minoPlayerCharacter: {fileID: 8153479734939820937, guid: 6bfa531261abf65429bf31bd8b83f2fa,
-    type: 3}
-  minoNetworkCharacter: {fileID: 1236918751095249697, guid: 869a0b539da9a284b9d1d861eda4f36d,
-    type: 3}
-  minoNetworkSpecator: {fileID: 0}
-  isSpectator: 0
-  handplayer: {fileID: 0}
-  calibrationVolume: {fileID: 0}
-  startGame:
-    m_PersistentCalls:
-      m_Calls: []
-  minoButtons: []
-  buttonEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_spectator: {fileID: 0}
   m_playerCharacter: {fileID: 0}
   colors:
   - {r: 1, g: 1, b: 1, a: 1}
@@ -12523,7 +12544,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   callBecameMasterAfterInitSeconds: 5
-  testTriggerEmitAllStates: 0
 --- !u!4 &1210415840
 Transform:
   m_ObjectHideFlags: 0
@@ -19089,50 +19109,88 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db00007d156f0f6419fd7e154e327721, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 0
+  _sceneID: 254
   _lock: 0
+  m_highlightLock: 0
+  _physicsActive: 0
   _gizmo: {fileID: 0}
   _icon: {fileID: 0}
   position:
     _name: 
     _type: 0
+    _parent: {fileID: 0}
+    _id: 0
     _distribute: 0
+    _networkLock: 0
+    _rpc: 0
     _value: {x: 0, y: 0, z: 0}
     _initialValue: {x: 0, y: 0, z: 0}
+    _dataSize: 0
   rotation:
     _name: 
     _type: 0
+    _parent: {fileID: 0}
+    _id: 0
     _distribute: 0
+    _networkLock: 0
+    _rpc: 0
     _value: {x: 0, y: 0, z: 0, w: 0}
     _initialValue: {x: 0, y: 0, z: 0, w: 0}
+    _dataSize: 0
   scale:
     _name: 
     _type: 0
+    _parent: {fileID: 0}
+    _id: 0
     _distribute: 0
+    _networkLock: 0
+    _rpc: 0
     _value: {x: 0, y: 0, z: 0}
     _initialValue: {x: 0, y: 0, z: 0}
+    _dataSize: 0
+  tr: {fileID: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
+    m_CallsDirty: 1
   ourGUID: Directional Light33674
   adjustChildOnLockStateChanged: 0
   adjustPhysicsToLockState: 1
+  usePlatformParentCheck: 0
   sendPosViaParent: 0
+  currentNetworkData:
+    _name: 
+    _type: 0
+    _parent: {fileID: 0}
+    _id: 0
+    _distribute: 0
+    _networkLock: 0
+    _rpc: 0
+    _value: {x: 0, y: 0, z: 0, w: 0}
+    _initialValue: {x: 0, y: 0, z: 0, w: 0}
+    _dataSize: 0
+  useParentingAndPosUpdates: 0
+  nonAllocVector4: {x: 0, y: 0, z: 0, w: 0}
+  ourCurrentParentTr: {fileID: 0}
+  ourCurrentParentSOM: {fileID: 0}
+  currentSOMID: -1
+  networkDataWeReceived: {x: 0, y: 0, z: 0, w: 0}
+  receivedDataOnce: 0
+  discardCheckPositionList: []
+  discardPositionListSum: {x: 0, y: 0, z: 0}
+  discardsInRow: 0
   m_triggerCollider: {fileID: 0}
+  m_collidedSceneObjects: []
+  isTriggered: 0
+  m_collidedPlayerAmount: 0
   triggerEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1901200955}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: FadeOut
-          m_BoolArgument: 0
-        m_CallState: 1
+      - {m_Target: {fileID: 1901200955}, m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine, m_MethodName: SetTrigger, m_Mode: 5, m_Arguments: {m_ObjectArgument: {fileID: 0},
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine, m_IntArgument: 0,
+          m_FloatArgument: 0, m_StringArgument: FadeOut, m_BoolArgument: 0}, m_CallState: 1}
+    m_CallsDirty: 1
   isUsed: 0
   reusable: 0
 --- !u!1001 &1916656850
@@ -21447,6 +21505,79 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f45ca306af0d7f4882b22a9602a16ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &8061986929713237511
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4799565603038598537, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerChar
+      objectReference: {fileID: 0}
+    - target: {fileID: 4799565603038598537, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 6.6229935
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9024882166447979861, guid: 9886f6fac6a329d438c3dda6a0843765,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9886f6fac6a329d438c3dda6a0843765, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -21456,3 +21587,4 @@ SceneRoots:
   - {fileID: 1269524764}
   - {fileID: 960963801}
   - {fileID: 2112558666}
+  - {fileID: 8061986929713237511}
