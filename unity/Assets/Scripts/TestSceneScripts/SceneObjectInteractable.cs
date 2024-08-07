@@ -81,6 +81,13 @@ public class SceneObjectInteractable : SceneObjectMino{
         }
     }
 
+    void OnTriggerEnter(Collider col){
+        Event_SetIsTriggered(true);
+    }
+    void OnTriggerExit(Collider col){
+        Event_SetIsTriggered(true);
+    }
+
     private void IsActive(){
         isActiveEvent?.Invoke();
     }
