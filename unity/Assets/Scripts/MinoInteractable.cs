@@ -182,5 +182,13 @@ public class MinoInteractable : SceneObjectMino{
         isExecuting = false;
     }
 
+    private int pressedCount = 0;
+
+    public void IncreasePressedCount(){
+        pressedCount++;
+        GetComponentInChildren<TextMesh>().text = "Pressed ("+pressedCount+")";
+
+    }
+
 
 }
