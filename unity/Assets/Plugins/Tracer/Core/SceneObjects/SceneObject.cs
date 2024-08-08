@@ -42,7 +42,7 @@ namespace tracer
         //!
         //! Is the sceneObject locked?
         //!
-        protected bool _lock = false;
+        public bool _lock = false;
         //!
         //! Position of the SceneObject
         //!

@@ -21,7 +21,7 @@ public class SceneObjectMinoEditor : Editor
         GUILayout.Space(10);
 
         if(sceneObjectMino.IsLocked()){
-            GUILayout.Label("is locked via other client");
+            //GUILayout.Label("is locked via other client");
             GUILayout.Space(10);
             if (GUILayout.Button("Gain Lock on this client")){
                 // Access the SceneObjectMino instance
@@ -29,7 +29,7 @@ public class SceneObjectMinoEditor : Editor
                 sceneObjectMino.lockObject(true);
             }
         }else{
-            GUILayout.Label("is unlocked on this client");   
+            //GUILayout.Label("is unlocked on this client");   
             if (GUILayout.Button("Discard Lock from this client"))
             {
                 // Access the SceneObjectMino instance

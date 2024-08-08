@@ -4,7 +4,7 @@ using UnityEngine;
 using tracer;
 using UnityEngine.Events;
 
-public class SceneObjectInteractable : SceneObjectMino{
+public class MinoInteractable : SceneObjectMino{
 
     public InteractableNetworkBehaviourEnum interactableNetworkBehaviour = InteractableNetworkBehaviourEnum.byMaster;
 
@@ -60,7 +60,6 @@ public class SceneObjectInteractable : SceneObjectMino{
     }
 
     private void IsTriggered(bool triggered){   
-        Debug.Log("Call()>>IsTriggered()");
         switch(interactableNetworkBehaviour){
             case InteractableNetworkBehaviourEnum.byMaster:
                 if(_lock || !MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer())
@@ -109,8 +108,7 @@ public class SceneObjectInteractable : SceneObjectMino{
         }
     }
 
-    public void Event_SetIsTriggered(bool b){       //will call hasChanged
-        Debug.Log("Call()");
+    public void Event_SetIsTriggered(bool b){ 
         m_isTriggered.Call(b, true);
     }
 
@@ -118,6 +116,7 @@ public class SceneObjectInteractable : SceneObjectMino{
         //So we will send an IsActive
         isActive = b;
     }
+
 
     //TEST FUNCTIONS
     [Header("Test Functions")]
@@ -158,7 +157,6 @@ public class SceneObjectInteractable : SceneObjectMino{
         float t = 0f;
         while(t<1f){
             t += Time.fixedDeltaTime/3f;
-            //trToMove.position = Vector3.Lerp(start, end, t);
             coroMoveEvent.Invoke(1);
             yield return null;
         }

@@ -52,8 +52,6 @@ namespace tracer
             byEveryone = 0,             //never checks for its own lock
             byEveryone4Everyone = 3,    //should emit its signal and everyone should execute stuff locally (and do not emit any position etc)
             byMaster = 10               //only send updates if we are the master ( == we are not locked!)
-            
-            //byMasterClient = 20 //checks for MasterClient == client with lowest [player]nr
         }
 
         private bool lockStateWas = true;
@@ -75,20 +73,17 @@ namespace tracer
         //!
         //! Initialisation
         //!
-        public override void Awake()
-        {
-            // MINO: AnimatorOverrideController base awake
-            ////////////////////////////////////////////////////////
+        public override void Awake(){
+
             if (_core == null)
                 _core = GameObject.FindObjectOfType<Core>();
 
             _sceneID = 254;
-            //_id = getSoID();
             
             _parameterList = new List<AbstractParameter>();
             tr = GetComponent<Transform>();
-            /////////////////////////////////////////////////////////
 
+            lockStateWas = _lock;
             
             position = new Parameter<Vector3>(tr.position, "position", this);
             position.hasChanged += updatePosition;
@@ -96,6 +91,9 @@ namespace tracer
             rotation.hasChanged += updateRotation;
             //scale = new Parameter<Vector3>(tr.localScale, "scale", this);
             //scale.hasChanged += updateScale;
+
+            //test to send this all time!
+            sendPosViaParent = true;
             
             if(sendPosViaParent && !useParentingAndPosUpdates){
                 InitToUseParentingPosUpdates();
@@ -134,7 +132,8 @@ namespace tracer
             else
                 _id = oID;
 
-            //LogInitialisation(System.Reflection.MethodBase.GetCurrentMethod(), "sets _id: " + _id);
+            if(MinoGameManager.Instance.logInitCalls)
+                LogInitialisation(System.Reflection.MethodBase.GetCurrentMethod(), "sets _id: " + _id);
 
             _core.addParameterObject(this);
             _core.getManager<NetworkManager>().AddSceneObject(this);
@@ -152,7 +151,8 @@ namespace tracer
                 _id = oID;
 
             //this will most likely overwrite an _id we have given earlier via Init and would result in wrong InitPersistentSOM
-            //LogInitialisation(System.Reflection.MethodBase.GetCurrentMethod(), "sets _id: " + _id);
+            if(MinoGameManager.Instance.logInitCalls)
+                LogInitialisation(System.Reflection.MethodBase.GetCurrentMethod(), "sets _id: " + _id);
 
             _core.addParameterObject(this);
         }
@@ -184,17 +184,6 @@ namespace tracer
         }
         
         
-        protected override void updatePosition(object sender, Vector3 a){
-            tr.position = a;
-            emitHasChanged((AbstractParameter)sender);
-        }
-
-        protected override void updateRotation(object sender, Quaternion a)
-        {
-            tr.rotation = a;
-            emitHasChanged((AbstractParameter)sender);
-        }
-        
         private void AdjustChildrenLockState(){ //only the client who gains master state, will call this on its children (will be send over network either way!)
             if(_lock)
                 return;
@@ -210,12 +199,12 @@ namespace tracer
                 if(IsCharacter(rg.gameObject))
                     continue;
                 if(_lock){
-                    Debug.Log("SET KINEMATIC");
+                    //Debug.Log("SET KINEMATIC");
                     rg.angularVelocity = Vector3.zero;
                     rg.velocity = Vector3.zero;
                     rg.isKinematic = true;
                 }else{
-                    Debug.Log("SET PHYSICAL");
+                    //Debug.Log("SET PHYSICAL");
                     rg.isKinematic = false;
                 }
             }
@@ -226,22 +215,9 @@ namespace tracer
         }
 
         #region NETWORK_PARENTING
-        //kind of jitter hotfix, so we send local data if we ware parented to any sceneobjectmino
-
-        /***********
-         * How to use
-         * Any subclass of SceneObjectMino that want to use this, should:
-         *      - call InitJitterHotfix in the Awake                        (this will init the parameter and callbacks)
-         *      - if you override the Update and dont call base.Update      (this prevents position and rotation updates)
-         *      -- in Update: add CheckAndEmitLocalOrWorldPos               (take care of our pos and parent for all network objects, if not locked!)
-         *      -- in Update: add ApplyPosDataWeReceived();                 (this will receive values once we are locked)
-         *      -- in Update: add ReParentIfNeccessary(); in Update         (this will receive values once we are locked)
-         *      -- or dont override or call base.Update
-         *
-         *  TODO:
-         *      - add for rotation as well (but ever only check for parenting in one of those calls)
-         *
-         ***********/
+        //called so we send local position if neccessary and otherwise our global position
+        //its neccessary if we are a child of any object that inherits from SceneObjectMino (since it most likely can move)
+        //we also send our parent updates so we have the same on every client
 
         [Header("Network Parenting")]
         public bool sendPosViaParent = false; //for parenting and the discard message!
@@ -258,10 +234,10 @@ namespace tracer
         //do not update if not!
         private bool receivedDataOnce = false;
 
-        private const bool DISCARD_POSITION_RUNAWAYS = true;
-        private const float DISCARD_DISTANCE = 3f;
-        private const int DISCARD_CHECKLIST_LENGTH = 10;
-        private const int IGNORE_DISCARDS_IF_MORE_THAN_X_IN_ROW = 10;   //if we get more than these discards in row without a sync, than sync either way!
+        private const bool  DISCARD_POSITION_RUNAWAYS = true;            
+        private const float DISCARD_DISTANCE = 3f;                          //how big amplitudes are allowed to from the mean
+        private const int   DISCARD_CHECKLIST_LENGTH = 10;                //how many valid positions should be kept for mean calculation
+        private const int   IGNORE_DISCARDS_IF_MORE_THAN_X_IN_ROW = 10;   //if we get more than these discards in row without a sync, sync either way!
 
         private List<Vector3> discardCheckPositionList = new();
         private Vector3 discardPositionListSum;
@@ -286,8 +262,6 @@ namespace tracer
         protected void updateRootCharacterLocalPosAndParent(object sender, Vector4 posAndID){
             receivedDataOnce = true;
             networkDataWeReceived = posAndID;      //UPDATE THE POS
-            //only emit via script
-            //emitHasChanged((AbstractParameter)sender);
         }
 
         public void UpdateNetworkDataOnPlayerOnJoin(Vector4 posAndID){
@@ -348,10 +322,7 @@ namespace tracer
 
             if (currentNetworkData.value != nonAllocVector4){
                 currentNetworkData.setValue(nonAllocVector4, false);
-                //actually this will right now only send an update when parent changes, but not when we do any movement
-                //especially this will be different on the chars, since the root barely moves (despite when we are in the eleveator/baclony)
 
-                //Debug.Log(">>>>>>>>> SEND NETWORK DATA: "+currentNetworkData.ToString());
                 emitHasChanged(currentNetworkData);
             }
             
@@ -365,7 +336,6 @@ namespace tracer
             if(!useParentingAndPosUpdates)
                 return;
 
-            //currentNetworkData.setValue(nonAllocVector4);
             emitHasChanged(currentNetworkData);
         }
 
@@ -385,7 +355,6 @@ namespace tracer
             }
         }
 
-        #region ForLockedObjects
         //Called in the MinoNetworkCharacter, since they will NEVER send any values and that should always be called from All objects that are locked
         protected void ApplyNetworkPosDataOnLocked(){
             if(!receivedDataOnce)
@@ -404,7 +373,7 @@ namespace tracer
             if(!DISCARD_POSITION_RUNAWAYS)
                 return receivedTransformPos;
             
-            if(discardsInRow > IGNORE_DISCARDS_IF_MORE_THAN_X_IN_ROW){
+            if(discardsInRow > IGNORE_DISCARDS_IF_MORE_THAN_X_IN_ROW){  //if too many are discarded, we may should use the update!
                 discardCheckPositionList = new();
                 discardsInRow = 0;
             }
@@ -420,8 +389,8 @@ namespace tracer
                 discardPositionListSum += v;
             discardPositionListSum /= DISCARD_CHECKLIST_LENGTH;
             if(Vector3.Distance(discardPositionListSum, receivedTransformPos) > DISCARD_DISTANCE){
-                //DISCARD!
                 discardsInRow++;
+                Debug.Log("DISCARD POS UPDATE. USE LATETS VALID ONE");
                 return discardCheckPositionList[^1];
             }
             discardsInRow = 0;
@@ -440,29 +409,6 @@ namespace tracer
             if(tr.parent != ourCurrentParentTr)
                 tr.parent = ourCurrentParentTr;
         }
-        #endregion
-
-        /***********
-         *
-         * Example
-         * The Character will update its head and hand position in local space
-         * It will call CheckAndEmitLocalOrWorldPos in its Update,
-         * but never calls ApplyPosDataWeReceived nor ReParentIfNeccessary, since it will never receive pos data - only sends
-         *
-         *      void override Update(){
-         *          if(!_lock)
-         *              CheckAndEmitLocalOrWorldPos()
-         *          else{
-         *              ApplyPosDataWeReceived();
-         *              ReParentIfNeccessary();
-         *          }
-         *      }
-         *
-         * TODO: add bool var at top, take care of how and what we handle, no more override of Update, but allow another virtual function others can use
-         *       VirtualPreUpdate and VirtualAfterUpdate
-         *
-         ***********/
-
         #endregion
 
     }
