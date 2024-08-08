@@ -108,6 +108,16 @@ public class MinoInteractable : SceneObjectMino{
         }
     }
 
+    public override void OnDestroy()
+    {
+        if(!neverMoves)  
+            base.OnDestroy();
+        else{
+            _core.removeParameterObject(this);
+            _core.getManager<NetworkManager>().RemoveSceneObject(this);
+        }
+    }
+
     public void Event_SetIsTriggered(bool b){ 
         m_isTriggered.Call(b, true);
     }

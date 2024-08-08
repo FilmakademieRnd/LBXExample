@@ -185,7 +185,7 @@ namespace tracer
             m_managerList.Add(typeof(NetworkManager), networkManager);
             
             //Create scene manager
-            /*SceneManager sceneManager = new SceneManager(typeof(SceneManagerModule), this);
+            SceneManager sceneManager = new SceneManager(typeof(SceneManagerModule), this);
             m_managerList.Add(typeof(SceneManager), sceneManager);
 
             //Create UI manager
@@ -194,7 +194,7 @@ namespace tracer
 
             //Create Animation manager
             AnimationManager animationManager = new AnimationManager(typeof(AnimationManagerModule), this);
-            m_managerList.Add(typeof(AnimationManager), animationManager);*/
+            m_managerList.Add(typeof(AnimationManager), animationManager);
 
             LoadSettings();
 

@@ -92,8 +92,6 @@ namespace tracer
             //scale = new Parameter<Vector3>(tr.localScale, "scale", this);
             //scale.hasChanged += updateScale;
 
-            //test to send this all time!
-            sendPosViaParent = true;
             
             if(sendPosViaParent && !useParentingAndPosUpdates){
                 InitToUseParentingPosUpdates();
@@ -114,10 +112,14 @@ namespace tracer
         //!
         public override void OnDestroy()
         {
-            base.OnDestroy();
-
+            
             if(useParentingAndPosUpdates)
                 currentNetworkData.hasChanged -= updateRootCharacterLocalPosAndParent;
+            
+            if(!sendPosViaParent)
+                position.hasChanged -= updatePosition;
+
+            rotation.hasChanged -= updateRotation;
 
             _core.removeParameterObject(this);
             _core.getManager<NetworkManager>().RemoveSceneObject(this);
@@ -220,7 +222,7 @@ namespace tracer
         //we also send our parent updates so we have the same on every client
 
         [Header("Network Parenting")]
-        public bool sendPosViaParent = false; //for parenting and the discard message!
+        private const bool sendPosViaParent = true;         //sending our position as local or global via parent we have
 
         protected Parameter<Vector4> currentNetworkData;    //Vector3 + sceneObjectID (if -1, the localPos is worldPos)
 
@@ -235,7 +237,7 @@ namespace tracer
         private bool receivedDataOnce = false;
 
         private const bool  DISCARD_POSITION_RUNAWAYS = true;            
-        private const float DISCARD_DISTANCE = 3f;                          //how big amplitudes are allowed to from the mean
+        private const float DISCARD_DISTANCE = 2f;                          //how big amplitudes are allowed to from the mean
         private const int   DISCARD_CHECKLIST_LENGTH = 10;                //how many valid positions should be kept for mean calculation
         private const int   IGNORE_DISCARDS_IF_MORE_THAN_X_IN_ROW = 10;   //if we get more than these discards in row without a sync, sync either way!
 
@@ -307,7 +309,7 @@ namespace tracer
             InitToUseParentingPosUpdates();
         }
 
-        protected void RemoveJitterHotfix(){
+        protected void RemoveParentPosUpdate(){
             //From OnDestroyEvent
             if(useParentingAndPosUpdates)
                 currentNetworkData.hasChanged -= updateRootCharacterLocalPosAndParent;
@@ -372,7 +374,7 @@ namespace tracer
         private Vector3 DiscardPositionUpdate(Vector3 receivedTransformPos){
             if(!DISCARD_POSITION_RUNAWAYS)
                 return receivedTransformPos;
-            
+
             if(discardsInRow > IGNORE_DISCARDS_IF_MORE_THAN_X_IN_ROW){  //if too many are discarded, we may should use the update!
                 discardCheckPositionList = new();
                 discardsInRow = 0;
@@ -383,6 +385,9 @@ namespace tracer
                 return receivedTransformPos;
             }
 
+            if(receivedTransformPos == discardCheckPositionList[^1])
+                return receivedTransformPos;
+
             //check that ~mean~ is not too far away from our shown previous positions
             discardPositionListSum = Vector3.zero;
             foreach(Vector3 v in discardCheckPositionList)
@@ -390,13 +395,19 @@ namespace tracer
             discardPositionListSum /= DISCARD_CHECKLIST_LENGTH;
             if(Vector3.Distance(discardPositionListSum, receivedTransformPos) > DISCARD_DISTANCE){
                 discardsInRow++;
-                Debug.Log("DISCARD POS UPDATE. USE LATETS VALID ONE");
+                Debug.Log("DISCARD POS UPDATE. USE LATEST VALID ONE");
                 return discardCheckPositionList[^1];
             }
             discardsInRow = 0;
             discardCheckPositionList.Add(receivedTransformPos);
             discardCheckPositionList.RemoveAt(0);
             return receivedTransformPos;
+        }
+
+        private void AddDiscardPosition(Vector3 pos){
+            discardCheckPositionList.Add(pos);
+            if(discardCheckPositionList.Count == DISCARD_CHECKLIST_LENGTH)
+                discardCheckPositionList.RemoveAt(0);
         }
 
         private void ApplyParentUpdateOnLocked(){
