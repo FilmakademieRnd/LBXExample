@@ -15,14 +15,3 @@ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 FOR A PARTICULAR PURPOSE. See the MIT License for more details.
 You should have received a copy of the MIT License along with this program; 
 if not go to https://opensource.org/licenses/MIT
-
--------------------------------------------------------------------------------
-
-TRACER FOUNDATION incorporate the following resources 
-(linked dynamically):
-
-NetMQ  				- LGPLv3 (https://github.com/zeromq/netmq)
-AsyncIO 			- MPLv2.0 (https://github.com/somdoron/AsyncIO)
-NaCI 				- Public Domain (https://nacl.cr.yp.to/)
-
--------------------------------------------------------------------------------
