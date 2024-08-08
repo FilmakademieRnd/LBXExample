@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8567024811609681050}
   - component: {fileID: 8949866116109487348}
   - component: {fileID: 4432605263354161260}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Physical-Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,33 +48,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _lock: 0
-  _gizmo: {fileID: 0}
-  _icon: {fileID: 0}
-  position:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
-  rotation:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0, w: 0}
-    _initialValue: {x: 0, y: 0, z: 0, w: 0}
-  scale:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
   ourGUID: 
   adjustChildOnLockStateChanged: 0
   adjustPhysicsToLockState: 0
-  sendPosViaParent: 0
   interactableNetworkBehaviour: 10
   neverMoves: 1
   onTriggeredEvent:
@@ -133,7 +112,7 @@ GameObject:
   - component: {fileID: 355331307936175321}
   - component: {fileID: 4928582018639014033}
   - component: {fileID: 4926134114138327598}
-  m_Layer: 11
+  m_Layer: 0
   m_Name: Viz
   m_TagString: Untagged
   m_Icon: {fileID: 0}
