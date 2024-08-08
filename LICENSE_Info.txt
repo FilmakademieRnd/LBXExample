@@ -5,7 +5,7 @@ Copyright (c) 2024 Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Lab
 
 The TRACER Location Based Experience Example is a development by 
 Filmakademie Baden-Wuerttemberg, Animationsinstitut R&D Labs in the scope 
-of the EU funded project EMIL (101070533).
+of the EU funded project EMIL (101070533).
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
