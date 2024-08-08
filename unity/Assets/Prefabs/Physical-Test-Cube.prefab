@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7524245483056605533}
   - component: {fileID: 5820725396013360578}
   - component: {fileID: 544164872174766205}
+  - component: {fileID: 1344504473573325821}
   m_Layer: 0
   m_Name: Physical-Test-Cube
   m_TagString: Untagged
@@ -51,33 +52,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _lock: 1
-  _gizmo: {fileID: 0}
-  _icon: {fileID: 0}
-  position:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
-  rotation:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0, w: 0}
-    _initialValue: {x: 0, y: 0, z: 0, w: 0}
-  scale:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
   ourGUID: TestCube233004
   adjustChildOnLockStateChanged: 0
   adjustPhysicsToLockState: 1
-  sendPosViaParent: 1
 --- !u!65 &7524245483056605533
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -139,6 +119,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugLockText: {fileID: 7218532136366915047}
+  useMaterialColorToShow: 0
+--- !u!114 &1344504473573325821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117924985366295350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40d479310a954b246af3864dd4ddbe9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3735614391869386249
 GameObject:
   m_ObjectHideFlags: 0

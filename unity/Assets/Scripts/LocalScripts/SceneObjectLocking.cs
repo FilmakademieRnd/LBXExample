@@ -26,13 +26,14 @@ public class SceneObjectLocking : MonoBehaviour{
 
         InvokeRepeating("CheckForMaster", 0, 1f);
 
-        mr = GetComponent<MeshRenderer>();
+        mr = GetComponentInChildren<MeshRenderer>();
         som = GetComponentInChildren<SceneObjectMino>();
     }
 
     public void BecameMaster(){
         if(!isMaster){
             isMaster = true;
+            som.lockObject(true);
             CheckForMaster();
         }
     }
