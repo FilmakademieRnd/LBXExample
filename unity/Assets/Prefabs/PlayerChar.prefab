@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 4799565603038598537}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.6229935, y: 1.08, z: 6.04}
+  m_LocalPosition: {x: 0, y: 1.08, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -150,33 +150,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _lock: 0
-  _gizmo: {fileID: 0}
-  _icon: {fileID: 0}
-  position:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
-  rotation:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0, w: 0}
-    _initialValue: {x: 0, y: 0, z: 0, w: 0}
-  scale:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
   ourGUID: 
   adjustChildOnLockStateChanged: 0
   adjustPhysicsToLockState: 0
-  sendPosViaParent: 1
 --- !u!1 &8545886991608624409
 GameObject:
   m_ObjectHideFlags: 0

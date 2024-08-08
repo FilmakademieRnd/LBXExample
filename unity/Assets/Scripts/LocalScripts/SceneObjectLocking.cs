@@ -1,50 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using tracer;
 
 public class SceneObjectLocking : MonoBehaviour{
 
     public TextMesh debugLockText;
+    public bool useMaterialColorToShow = false;
 
-    private bool isMasterCalled = false;
+    private SceneObjectMino som;
+    private bool isMaster = false;
+    private MeshRenderer mr;
 
     void Start(){
         //START LOCKED (despite we are the Master - can happen on later spawned objects!)
         if(!MinoGameManager.Instance.AreWeMaster()){
             foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>())
                 som.lockObjectLocal(true);    
-                //use the lockObject so we call the correct physical behaviours due to locking
-                //som.lockObject(false);
-                //... but its not ready at game start...
         }else{
             foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>())
-                som.lockObject(true);//som.lockObjectLocal(false); //we do not call lockObject(true), because it can be that we are a spawned object and that would result in an error
+                som.lockObject(true);
 
-            isMasterCalled = true;
+            isMaster = true;
         }
 
-        if(debugLockText)
-            debugLockText.text = "isMaster/unlocked \n"+isMasterCalled;
         MinoGameManager.Instance.onBecameMasterClient.AddListener(BecameMaster);
 
-        InvokeRepeating("UpdateIfWeLostMaster", 5f, 2f);
+        InvokeRepeating("CheckForMaster", 0, 1f);
+
+        mr = GetComponent<MeshRenderer>();
+        som = GetComponentInChildren<SceneObjectMino>();
     }
 
     public void BecameMaster(){
-        if(!isMasterCalled){
-            //we are locked, gain lock over everyone else
-            isMasterCalled = true;
-            if(debugLockText)
-                debugLockText.text = "isMaster/unlocked\n"+isMasterCalled;
-            foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>())
-                som.lockObject(true);
+        if(!isMaster){
+            isMaster = true;
+            CheckForMaster();
         }
     }
 
-    public void UpdateIfWeLostMaster(){
-        isMasterCalled = !GetComponentInChildren<SceneObjectMino>().IsLocked();  //check if one object is still not locked here
+    public void CheckForMaster(){
+        isMaster = !som.IsLocked();  //check if one object is still not locked here
         if(debugLockText)
-            debugLockText.text = "isMaster/unlocked\n"+isMasterCalled;
+            debugLockText.text = "isMaster/unlocked\n"+isMaster;
+        if(useMaterialColorToShow){
+            if(mr)
+                mr.material.color = isMaster ? Color.green : Color.red;
+        }
     }
 }
