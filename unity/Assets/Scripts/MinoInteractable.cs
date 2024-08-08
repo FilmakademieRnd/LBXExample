@@ -43,7 +43,6 @@ public class MinoInteractable : SceneObjectMino{
     }
 
     private void HasChanged(object sender, bool triggered){  
-        Debug.Log("hasChanged>>HasChanged()");
         switch(interactableNetworkBehaviour){
             case InteractableNetworkBehaviourEnum.byMaster:
                 if(!MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){   //check _lock?

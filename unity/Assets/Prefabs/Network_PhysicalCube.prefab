@@ -52,33 +52,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _lock: 1
-  _gizmo: {fileID: 0}
-  _icon: {fileID: 0}
-  position:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
-  rotation:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0, w: 0}
-    _initialValue: {x: 0, y: 0, z: 0, w: 0}
-  scale:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
   ourGUID: TestCube233004
   adjustChildOnLockStateChanged: 0
   adjustPhysicsToLockState: 1
-  sendPosViaParent: 1
 --- !u!65 &718755780954947110
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -140,6 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugLockText: {fileID: 5155089953386418775}
+  useMaterialColorToShow: 1
 --- !u!114 &5557438641339854376
 MonoBehaviour:
   m_ObjectHideFlags: 0

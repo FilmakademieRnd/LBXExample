@@ -553,7 +553,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: Physcial-Button-Count (3)46828
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -962,7 +962,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: InteractableTrigger46850
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -1043,7 +1043,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 1391778238}
+      objectReference: {fileID: 1938080475}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1171,7 +1171,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: InteractableTrigger46856
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -1252,7 +1252,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 1898202078}
+      objectReference: {fileID: 190486356}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -1559,7 +1559,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: InteractableTrigger46880
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -1802,7 +1802,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: Button-Count46890
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -2176,7 +2176,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: InteractableTrigger46912
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -2375,7 +2375,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: Button46918
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -2588,7 +2588,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: InteractableTrigger46924
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -2669,7 +2669,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 1898202078}
+      objectReference: {fileID: 675828376}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -2825,7 +2825,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: Button-Count46934
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -3061,7 +3061,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: InteractableTrigger46942
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -3142,7 +3142,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 1898202078}
+      objectReference: {fileID: 1579333092}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -3359,7 +3359,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: Button-Count46956
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -3564,7 +3564,7 @@ PrefabInstance:
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: ourGUID
-      value: Physcial-Button-Up&Down34698
+      value: InteractableTrigger46962
       objectReference: {fileID: 0}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
@@ -3645,7 +3645,7 @@ PrefabInstance:
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgument
       value: 
-      objectReference: {fileID: 1391778238}
+      objectReference: {fileID: 943910296}
     - target: {fileID: 8949866116109487348, guid: 7b5c2aa520f194448b0257f20533f434,
         type: 3}
       propertyPath: onTriggeredEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
