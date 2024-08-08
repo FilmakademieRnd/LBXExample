@@ -26,6 +26,10 @@
 # Visual Studio cache directory
 .vs/
 
+# Plugins
+/[Aa]ssets/TextMesh Pro*
+/[Aa]ssets/Scripts/Tools/ParrelSync*
+
 # Gradle cache directory
 .gradle/
 
@@ -77,7 +81,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Exclude testing copy
-
 /unity_clone_0/
 /unity_clone_1/
 /unity_clone_2/
