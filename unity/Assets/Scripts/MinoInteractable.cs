@@ -62,7 +62,6 @@ public class MinoInteractable : SceneObjectMino{
     }
 
     private void HasChanged(object sender, bool triggered){  
-        Debug.Log("hasChanged>>HasChanged()");
         switch(interactableNetworkBehaviour){
             case InteractableNetworkBehaviourEnum.byMaster:
                 if(!MinoGameManager.Instance.WeAreTheLowestPlayerNumberPlayer()){   //check _lock?
@@ -127,8 +126,7 @@ public class MinoInteractable : SceneObjectMino{
         }
     }
 
-    public override void OnDestroy()
-    {
+    public override void OnDestroy(){
         if(!neverMoves)  
             base.OnDestroy();
         else{
@@ -206,7 +204,18 @@ public class MinoInteractable : SceneObjectMino{
     public void IncreasePressedCount(){
         pressedCount++;
         GetComponentInChildren<TextMesh>().text = "Pressed ("+pressedCount+")";
+    }
 
+    public void TriggerNextDelayed(MinoInteractable nextInteractable){
+        StartCoroutine(TriggerNextDelayed_Coro(nextInteractable));
+    }
+    private IEnumerator TriggerNextDelayed_Coro(MinoInteractable nextInteractable){
+        yield return new WaitForSeconds(0.2f);
+        nextInteractable.Event_SetIsTriggered(true);
+    }
+
+    public void ChangeColorRandom(){
+        GetComponentInChildren<MeshFilter>().GetComponent<MeshRenderer>().material.color = Random.ColorHSV();
     }
 
 
