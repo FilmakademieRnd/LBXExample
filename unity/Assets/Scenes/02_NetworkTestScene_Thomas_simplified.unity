@@ -1611,74 +1611,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &209826049
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 209826052}
-  - component: {fileID: 209826051}
-  - component: {fileID: 209826053}
-  m_Layer: 0
-  m_Name: EventSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &209826051
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 209826049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
---- !u!4 &209826052
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 209826049}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1631318286}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &209826053
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 209826049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
 --- !u!1001 &224949178
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6326,27 +6258,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8202b26e9dcf51548a0811f800fb90c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lock: 0
-  _gizmo: {fileID: 0}
-  _icon: {fileID: 0}
-  position:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
-  rotation:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0, w: 0}
-    _initialValue: {x: 0, y: 0, z: 0, w: 0}
-  scale:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8848,15 +8759,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3405a2328a6eb6e4eb6ba7778f68c8a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setTimeSyncOnlyOnce: 0
-  syncSetOnce: 0
-  simulateLowFramerate: 0
-  timeUpdateInterval: 0
-  backgroundLoadingPriority: 1
-  discardOlderTimePositionUpdates: 0
-  isServer: 0
   serverIp: 127.0.0.1
-  showUserInterface: 0
   useRandomCID: 1
 --- !u!4 &903756076
 Transform:
@@ -11417,48 +11320,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a24e5645df021554cae62da9433bdbb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lock: 0
-  _gizmo: {fileID: 0}
-  _icon: {fileID: 0}
-  position:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
-  rotation:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0, w: 0}
-    _initialValue: {x: 0, y: 0, z: 0, w: 0}
-  scale:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
   logNetworkCalls: 1
   logInitCalls: 1
-  debugLogIngameText: {fileID: 0}
-  minoPlayerCharacter: {fileID: 4799565603038598537, guid: 9886f6fac6a329d438c3dda6a0843765,
-    type: 3}
   colors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 0.2170747, g: 0.17221431, b: 0.8490566, a: 1}
   - {r: 0.3520347, g: 0.6226415, b: 0.27901387, a: 1}
   - {r: 0.990566, g: 0.71081525, b: 0.1728818, a: 1}
   - {r: 0.9528302, g: 0.14831792, b: 0.3518866, a: 1}
+  playerCharacter: {fileID: 4799565603038598537, guid: 9886f6fac6a329d438c3dda6a0843765,
+    type: 3}
   onPlayerNumberUpdated:
     m_PersistentCalls:
       m_Calls: []
   onBecameMasterClient:
     m_PersistentCalls:
       m_Calls: []
-  callBecameMasterAfterInitSeconds: 5
 --- !u!4 &1210415840
 Transform:
   m_ObjectHideFlags: 0
@@ -12806,27 +12686,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8202b26e9dcf51548a0811f800fb90c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lock: 0
-  _gizmo: {fileID: 0}
-  _icon: {fileID: 0}
-  position:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
-  rotation:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0, w: 0}
-    _initialValue: {x: 0, y: 0, z: 0, w: 0}
-  scale:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -15062,7 +14921,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 209826052}
   - {fileID: 903756076}
   - {fileID: 1210415840}
   m_Father: {fileID: 0}
@@ -15221,27 +15079,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 447213402e776a74aab247eea38ff7b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _lock: 0
-  _gizmo: {fileID: 0}
-  _icon: {fileID: 0}
-  position:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
-  rotation:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0, w: 0}
-    _initialValue: {x: 0, y: 0, z: 0, w: 0}
-  scale:
-    _name: 
-    _type: 0
-    _distribute: 0
-    _value: {x: 0, y: 0, z: 0}
-    _initialValue: {x: 0, y: 0, z: 0}
   onLockStateChanged:
     m_PersistentCalls:
       m_Calls: []

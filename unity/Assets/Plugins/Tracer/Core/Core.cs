@@ -74,30 +74,6 @@ namespace tracer
             set { _settings = value; }
         }
 
-        //for debugging - msg buffer did not get emptied
-        #region DEBUGGING TESTS
-        //for debugging - msg buffer did not get emptied
-        public bool setTimeSyncOnlyOnce = true;
-        [HideInInspector]
-        public bool syncSetOnce = false;
-        public bool simulateLowFramerate = false;
-
-        public enum TimeUpdateIntervalEnum{
-            viaInvokeRepeatingUnityThread = 0,
-            viaOtherThreadInvoke = 10
-        }
-        public TimeUpdateIntervalEnum timeUpdateInterval = TimeUpdateIntervalEnum.viaOtherThreadInvoke;
-
-        public ThreadPriority backgroundLoadingPriority = ThreadPriority.BelowNormal;
-
-        public bool discardOlderTimePositionUpdates = true;
-        //public bool useCatchupLoopForBuffer = true;
-        #endregion
-
-        //!
-        //! Flag determining wether the VPERT instance acts as a server or client.
-        //!
-        public bool isServer = false;
         //!
         //! The current local time stores as value between 0 and 255.
         //!
@@ -176,33 +152,18 @@ namespace tracer
         //! Event invoked every second.
         //!
         public event EventHandler<byte> syncEvent;
-        
+
+        [Tooltip("The network adress where the DataHub runs (could be 127.0.0.1, 178.132.1.1, ...)")]
         [SerializeField] public string serverIp;
-        [SerializeField] public bool showUserInterface = true;
-        [SerializeField] public bool useRandomCID = false;
+
+        [Tooltip("If testing locally with multiple unity instances, you need a random network id")]
+        public bool useRandomCID = false;
 
         //!
         //! Unity's Awake callback, used for Initialization of all Managers and modules.
         //!
         void Awake()
         {
-            // Request necessary permissions at runtime
-            if (!Permission.HasUserAuthorizedPermission("android.permission.INTERNET"))
-            {
-                Permission.RequestUserPermission("android.permission.INTERNET");
-            }
-            if (!Permission.HasUserAuthorizedPermission("android.permission.ACCESS_NETWORK_STATE"))
-            {
-                Permission.RequestUserPermission("android.permission.ACCESS_NETWORK_STATE");
-            }
-            if (!Permission.HasUserAuthorizedPermission("android.permission.ACCESS_WIFI_STATE"))
-            {
-                Permission.RequestUserPermission("android.permission.ACCESS_WIFI_STATE");
-            }
-            if (!Permission.HasUserAuthorizedPermission("android.permission.ACCESS_FINE_LOCATION"))
-            {
-                Permission.RequestUserPermission("android.permission.ACCESS_FINE_LOCATION");
-            }
             
             // enable/disable logging
 #if UNITY_EDITOR
@@ -224,22 +185,16 @@ namespace tracer
             m_managerList.Add(typeof(NetworkManager), networkManager);
             
             //Create scene manager
-            SceneManager sceneManager = new SceneManager(typeof(SceneManagerModule), this);
+            /*SceneManager sceneManager = new SceneManager(typeof(SceneManagerModule), this);
             m_managerList.Add(typeof(SceneManager), sceneManager);
 
             //Create UI manager
             UIManager uiManager = new UIManager(typeof(UIManagerModule), this);
             m_managerList.Add(typeof(UIManager), uiManager);
 
-            /*
-            //Create Input manager
-            InputManager inputManager = new InputManager(typeof(InputManagerModule), this);
-            m_managerList.Add(typeof(InputManager), inputManager);
-            */
-
             //Create Animation manager
             AnimationManager animationManager = new AnimationManager(typeof(AnimationManagerModule), this);
-            m_managerList.Add(typeof(AnimationManager), animationManager);
+            m_managerList.Add(typeof(AnimationManager), animationManager);*/
 
             LoadSettings();
 
@@ -249,15 +204,12 @@ namespace tracer
             awakeEvent?.Invoke(this, new EventArgs());
             lateAwakeEvent?.Invoke(this, new EventArgs());
 
-
-#if HMD
-        if (!showUserInterface)
             InitTracer();
-#endif
-    }
+        }
+
         public void InitTracer()
         {
-            StartCoroutine(WaitForInit(3));
+            StartCoroutine(WaitForInit(2));
         }
 
         private IEnumerator WaitForInit(float wait)
@@ -277,29 +229,13 @@ namespace tracer
             // Sync framerate to monitors refresh rate
             QualitySettings.vSyncCount = settings.vSyncCount;
             
-            #if UNITY_EDITOR
-            if(simulateLowFramerate)
-                Application.targetFrameRate = UnityEngine.Random.Range(5,15);
-            else
-            #endif
             Application.targetFrameRate = settings.framerate;
-
 
             m_orientation = Input.deviceOrientation;
 
             InvokeRepeating("checkDeviceOrientation", 0f, 1f);
             InvokeRepeating("pingDataHub", 0f, 1f);
-
-            if(timeUpdateInterval == TimeUpdateIntervalEnum.viaOtherThreadInvoke){
-                InvokeRepeating("Tick", 0f, Mathf.FloorToInt(1000f/settings.framerate) / 1000f); // computation to match the ms int scala of an QtTimer used in SyncServer
-                s_timer.Interval = Mathf.FloorToInt(1000f / settings.framerate);
-                s_timer.Elapsed += UpdateTime;
-                s_timer.AutoReset = true;
-                s_timer.Enabled = true;
-                s_timer.Start();
-            }else if(timeUpdateInterval == TimeUpdateIntervalEnum.viaInvokeRepeatingUnityThread){
-                InvokeRepeating("TickAndUpdateTime", 0f, Mathf.FloorToInt(1000f/settings.framerate) / 1000f);
-            }
+            InvokeRepeating("TickAndUpdateTime", 0f, Mathf.FloorToInt(1000f/settings.framerate) / 1000f);
 
             startEvent?.Invoke(this, new EventArgs());
         }
@@ -310,13 +246,6 @@ namespace tracer
         private void OnDestroy()
         {
             SaveSettings();
-            if(timeUpdateInterval == TimeUpdateIntervalEnum.viaOtherThreadInvoke){
-                s_timer.Stop();
-                s_timer.Elapsed -= UpdateTime;
-                s_timer.Dispose();  
-            }else{
-                
-            }
             destroyEvent?.Invoke(this, new EventArgs());
         }
 
@@ -335,29 +264,8 @@ namespace tracer
             if (Input.deviceOrientation != m_orientation)
             {
                 orientationChangedEvent.Invoke(this, 0f);
-                /// [DEACTIVATED BACAUSE WE DONT USE PORTAIT MODE] ///
-                //Debug.Log("ORIENTATION CHANGED TO: " + Input.deviceOrientation);
-                //Camera mainCamera = Camera.main;
-                //if ((Input.deviceOrientation == DeviceOrientation.Portrait &&
-                //     (m_orientation == DeviceOrientation.LandscapeLeft ||
-                //      m_orientation == DeviceOrientation.LandscapeRight))
-                //      ||
-                //     ((Input.deviceOrientation == DeviceOrientation.LandscapeLeft ||
-                //      Input.deviceOrientation == DeviceOrientation.LandscapeRight) &&
-                //     m_orientation == DeviceOrientation.Portrait))
-                //{
-                //    mainCamera.aspect = 1f / mainCamera.aspect;
-                //}
                 m_orientation = Input.deviceOrientation;
             }
-        }
-
-        //!
-        //! Function that triggers the Tracer/Unity message handling
-        //!
-        private void Tick()
-        {
-            timeEvent?.Invoke(this, EventArgs.Empty);
         }
 
         private void TickAndUpdateTime(){
@@ -378,7 +286,6 @@ namespace tracer
         private void UpdateTime(System.Object src, ElapsedEventArgs e)
         {
             System.Threading.Interlocked.Exchange(ref m_time, (m_time > (m_timesteps - 2) ? (byte)0 : m_time += 1));
-            //m_time = (m_time > (m_timesteps - 2) ? (byte)0 : m_time += 1);
         }
 
 

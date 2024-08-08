@@ -12,37 +12,35 @@ using Vector3 = UnityEngine.Vector3;
 public class MinoGameManager: SceneObject
 {
     private const int SOMID_START_OFFSET = 300;   //so we do never interfere with the player id (0-255)
+    
+    public static bool SceneObjectsInitialized = false;
+
     //Debug
     public bool logNetworkCalls = true;     //implemented to debug the Player join behaviour
     public bool logInitCalls = true;        //implemented to debug all objects init process
-    public TextMesh debugLogIngameText;
+    // PLAYER COLORS
+    public Color[] colors;
 
     //GameManager Singleton
     public static MinoGameManager Instance { get; private set; }
     
-    [SerializeField] private GameObject minoPlayerCharacter;
+    [SerializeField] private GameObject playerCharacter;
     
     public int numberPlayers{
         get { 
-            return GetPlayerNumber(true);
+            return GetPlayerNumber();
         }
     }
 
     private NetworkManager m_networkManager;
-
-
     private MinoCharacter m_playerCharacter = null;
+
+
     public MinoCharacter GetPlayer(){ return m_playerCharacter; }
 
     public SortedDictionary<short, MinoCharacter> m_networkCharacters;
-    
-    // PLAYER COLORS
-    public Color[] colors;
 
-    //all SceneObjectMino objects to find via id (e.g. for the ZoneStuff)
-    private Dictionary<short, SceneObjectMino> allMinoSceneObjectWithID;
-
-    public static bool SceneObjectsInitialized = false;     //Security check before we use the JitterHotfix
+    private Dictionary<short, SceneObjectMino> allMinoSceneObjectWithID;    //all SceneObjectMino objects to find via id
 
     // CLEANUP
     private byte m_deleteNetworkCharacter = 0;
@@ -51,8 +49,9 @@ public class MinoGameManager: SceneObject
     [HideInInspector] public UnityEvent<int> onPlayerNumberUpdated;
     [HideInInspector] public UnityEvent onBecameMasterClient;
 
-    public float callBecameMasterAfterInitSeconds = 5f;
+    private float callBecameMasterAfterInitSeconds = 3f;
     private bool becameMasterCalled = false;
+
     public int GetOurPlayerNumber(){ return networkClientList[0].playerNumber; }
 
     public bool AreWeMaster(){ return becameMasterCalled; }
@@ -95,102 +94,99 @@ public class MinoGameManager: SceneObject
             return playerNumber;
         }
 
-        public UnityEngine.Vector2 GetV2Data(){
-            return new UnityEngine.Vector2(networkId, -1);
-        }
-        public Vector3 GetV3Data(){
-            return new Vector3(networkId, playerNumber, -1);
+        public Vector2 GetV2Data(){
+            return new Vector2(networkId, playerNumber);
         }
     }
 
     private List<NetworkClientDataClass> networkClientList = new(); //first element are ourself!    
-    private RPCParameter<Vector2> m_sayHello;           //simply say hello with our network id and whether we are the specator to all
-    private RPCParameter<Vector3> m_replyImHere;                    //reply to hello with our network id, our player # and whether we are a specator
-    private RPCParameter<Vector3> m_replyIveChanged;                //network id, our # changed and if we are spec, so tell all others
+    private RPCParameter<int> m_sayHello;                           //simply say hello with our network id and whether we are the specator to all
+    private RPCParameter<Vector2> m_replyImHere;                    //reply to hello with our network id, our player # and whether we are a specator
+    private RPCParameter<Vector2> m_replyIveChanged;                //network id, our # changed and if we are spec, so tell all others
     
     public List<NetworkClientDataClass> GetNetworkClientList(){ return networkClientList; }
 
     //already existing attendees receive this of a new client
-    private void ReceivedHello(UnityEngine.Vector2 nId_spec){   //its the networkIdAndIfWeAreSpecator
-        Debug.Log(LogNetworkCalls.LogCallAtReceiver(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, "from "+nId_spec.x));
+    private void ReceivedHello(int networkId){   //its the networkIdAndIfWeAreSpecator
+        Debug.Log(LogNetworkCalls.LogCallAtReceiver(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, "from "+networkId));
 
         if(connectionState != ClientConnectionStateEnum.saidHello){
             Debug.Log("-------- IGNORE -------");
             return;
         }
 
-        if(WeKnowThisClient((int)nId_spec.x)){
+        if(WeKnowThisClient(networkId)){
             //another call below got received first
             Debug.Log("-------- WE ALREADY KNOW HIM! -------");
             return;
         }
 
         //create network player
-        InitiateNetworkPlayer((int)nId_spec.x, 1);
+        InitiateNetworkPlayer(networkId, 1);
 
         if(DoOurPlayerNumbersMatch(1)){
-            if(OurNetworkNumberIsHigher((int)nId_spec.x)){
+            if(OurNetworkNumberIsHigher(networkId)){
                 IncreaseOurPlayerNumberAndEmit();
             }
         }
         
         //reply (whom we greet, our networkId, our player number)
         Debug.Log(LogNetworkCalls.LogCallFromSender(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, "m_replyImHere"));
-        m_replyImHere.Call(networkClientList[0].GetV3Data());
+        m_replyImHere.Call(networkClientList[0].GetV2Data());
 
     }
 
-    private void ReceivedImHere(Vector3 nId_pNr_spec){ //everyone receives this from already existing attendees
-        Debug.Log(LogNetworkCalls.LogCallAtReceiver(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, nId_pNr_spec.ToString()));
+    private void ReceivedImHere(Vector2 nId_pNr){ //everyone receives this from already existing attendees
+        Debug.Log(LogNetworkCalls.LogCallAtReceiver(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, nId_pNr.ToString()));
         if(connectionState != ClientConnectionStateEnum.saidHello){
             Debug.Log("-------- IGNORE -------");
             return;
         }
         //we should already know this attendee, but if not (e.g. if we join simultaneously), create the player and do further checks
         //if networkClientIds does not contain greetId_nId_pNr.y
-        if(!WeKnowThisClient((int)nId_pNr_spec.x)){
+        if(!WeKnowThisClient((int)nId_pNr.x)){
             //create networkplayer, add greetId_nId_pNr.y to our networkPlayerIds
             //check if networkPlayerIds.z is the same as our # playerNumber
             //if so, check if ourNetworkId is > networkPlayerIds.y
                 //if so, increase our # playerNumber and emit this to the network via m_replyIveChanged
-            CreateNewNetworkPlayer(nId_pNr_spec);
+            CreateNewNetworkPlayer(nId_pNr);
         }else{
             Debug.Log("-------- WE ALREADY KNOW HIM! -------");
         }
     }
 
-    private void ReceivedIveChanged(Vector3 nId_pNr_spec){
-        Debug.Log(LogNetworkCalls.LogCallAtReceiver(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, nId_pNr_spec.ToString()));
+    private void ReceivedIveChanged(Vector2 nId_pNr){
+        Debug.Log(LogNetworkCalls.LogCallAtReceiver(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, nId_pNr.ToString()));
         if(connectionState != ClientConnectionStateEnum.saidHello){
             Debug.Log("-------- IGNORE -------");
             return;
         }
 
         //if we do not know this client, we could a) create it b) ignore it
-        if(!WeKnowThisClient((int)nId_pNr_spec.x)){
+        if(!WeKnowThisClient((int)nId_pNr.x)){
             //create networkplayer, add greetId_nId_pNr.y to our networkPlayerIds
             //check if networkPlayerIds.z is the same as our # playerNumber
             //if so, check if ourNetworkId is > networkPlayerIds.y
                 //if so, increase our # playerNumber and emit this to the network via m_replyIveChanged
-            CreateNewNetworkPlayer(nId_pNr_spec);
+            CreateNewNetworkPlayer(nId_pNr);
         }else{
             //updates their player number, do player number checks
-            UpdatePlayerNumber((int)nId_pNr_spec.x, (int)nId_pNr_spec.y);
+            UpdatePlayerNumber((int)nId_pNr.x, (int)nId_pNr.y);
             
-            if(DoOurPlayerNumbersMatch((int)nId_pNr_spec.y)){
-                if(OurNetworkNumberIsHigher((int)nId_pNr_spec.x)){
+            if(DoOurPlayerNumbersMatch((int)nId_pNr.y)){
+                if(OurNetworkNumberIsHigher((int)nId_pNr.x)){
                     IncreaseOurPlayerNumberAndEmit();
                 }else{
                     //tell oter player, that he has the same number as ours - do we an "IveCHangedEvent"
-                    m_replyIveChanged.Call(networkClientList[0].GetV3Data());
+                    m_replyIveChanged.Call(networkClientList[0].GetV2Data());
                 }
             }
         }
     }
 
-    private void CreateNewNetworkPlayer(Vector3 nId_pNr_spec){
-        int networkClientId = (int)nId_pNr_spec.x;
-        int networkPlayerNumber = (int)nId_pNr_spec.y;
+    private void CreateNewNetworkPlayer(Vector2 nId_pNr){
+        int networkClientId = (int)nId_pNr.x;
+        int networkPlayerNumber = (int)nId_pNr.y;
 
         InitiateNetworkPlayer(networkClientId, networkPlayerNumber);
         
@@ -205,7 +201,7 @@ public class MinoGameManager: SceneObject
     }
 
     private void InitiateNetworkPlayer(int networkClientId, int networkPlayerNumber){
-        GameObject minoNetworkCharacterGO = Instantiate(minoPlayerCharacter, transform.parent);
+        GameObject minoNetworkCharacterGO = Instantiate(playerCharacter, transform.parent);
         networkClientList.Add(new NetworkClientDataClass(networkClientId, minoNetworkCharacterGO, networkPlayerNumber));
 
         if(networkClientList[^1].isReplicate){
@@ -227,8 +223,8 @@ public class MinoGameManager: SceneObject
     private void IncreaseOurPlayerNumberAndEmit(){
         if(networkClientList[0].IncreasePlayerNumber() >= 0)
             onPlayerNumberUpdated.Invoke(GetOurPlayerNumber());
-        m_replyIveChanged.Call(networkClientList[0].GetV3Data());
-        Debug.Log(LogNetworkCalls.LogCallFromSender(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, "m_replyIveChanged: "+networkClientList[0].GetV3Data().ToString()));
+        m_replyIveChanged.Call(networkClientList[0].GetV2Data());
+        Debug.Log(LogNetworkCalls.LogCallFromSender(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, "m_replyIveChanged: "+networkClientList[0].GetV2Data().ToString()));
     }
 
     private bool WeKnowThisClient(int networkClientId){
@@ -248,7 +244,7 @@ public class MinoGameManager: SceneObject
         }
     }
 
-    private int GetPlayerNumber(bool ignoreSpectator){
+    private int GetPlayerNumber(){
         int pn = 0;
         foreach(NetworkClientDataClass client in networkClientList){
             pn += 1; 
@@ -279,15 +275,13 @@ public class MinoGameManager: SceneObject
         base.Awake();
 
         // Check if it's the only instance
-        if (Instance != null && Instance != this) 
-        { 
+        if (Instance != null && Instance != this) { 
             Destroy(this); 
-            return; //dont execute andy further if we destroy ourself
+            return;
         } 
-        else 
-        { 
+        else
             Instance = this; 
-        }
+        
 
         SceneObjectsInitialized = false;
         LogNetworkCalls.logCalls = logNetworkCalls;
@@ -295,20 +289,20 @@ public class MinoGameManager: SceneObject
 
         Setup(254, 1000);
 
-        m_playerCharacter = Instantiate(minoPlayerCharacter, tr.parent).GetComponent<MinoCharacter>();
+        m_playerCharacter = Instantiate(playerCharacter, tr.parent).GetComponent<MinoCharacter>();
         
         m_networkCharacters = new SortedDictionary<short, MinoCharacter>();
         m_networkManager = core.getManager<NetworkManager>();
 
-        m_sayHello = new RPCParameter<UnityEngine.Vector2>(UnityEngine.Vector2.zero, "SayHello", this);
+        m_sayHello = new RPCParameter<int>(-1, "SayHello", this);
         m_sayHello.hasChanged += UpdateRPC;
         m_sayHello.setCall(ReceivedHello);
 
-        m_replyImHere = new RPCParameter<Vector3>(Vector3.zero, "ReplyImHere", this);
+        m_replyImHere = new RPCParameter<Vector2>(Vector2.zero, "ReplyImHere", this);
         m_replyImHere.hasChanged += UpdateRPC;
         m_replyImHere.setCall(ReceivedImHere);
 
-        m_replyIveChanged = new RPCParameter<Vector3>(Vector3.zero, "SayHello", this);
+        m_replyIveChanged = new RPCParameter<Vector2>(Vector2.zero, "SayHello", this);
         m_replyIveChanged.hasChanged += UpdateRPC;
         m_replyIveChanged.setCall(ReceivedIveChanged);
 
@@ -322,10 +316,6 @@ public class MinoGameManager: SceneObject
     {
         base.OnDestroy();
 
-        if(Debug.isDebugBuild){
-            Application.logMessageReceived -= LogDebuMsgsToIngame;
-        }
-
         m_networkManager.RemoveSceneObject(this);
 
         m_sayHello.hasChanged -= UpdateRPC;
@@ -337,10 +327,6 @@ public class MinoGameManager: SceneObject
     }
 
     private void Init(object o, EventArgs e){
-        if(Debug.isDebugBuild){
-            Application.logMessageReceived += LogDebuMsgsToIngame;
-        }
-
         InitPersistentSOM();
 
         byte cID = core.getManager<NetworkManager>().cID;
@@ -357,7 +343,7 @@ public class MinoGameManager: SceneObject
         //add ourself
         networkClientList.Add(new NetworkClientDataClass(cID, m_playerCharacter.gameObject, 1, false));
         Debug.Log(LogNetworkCalls.LogCallFromSender(System.Reflection.MethodBase.GetCurrentMethod(), gameObject.name, "m_sayHello"));
-        m_sayHello.Call( networkClientList[0].GetV2Data());
+        m_sayHello.Call( networkClientList[0].networkId );
         connectionState = ClientConnectionStateEnum.saidHello; 
 
         StartCoroutine(MasterClientDelayCheck());
@@ -510,7 +496,7 @@ public class MinoGameManager: SceneObject
         //p1 starts, player char gets somid (e.g. 5)
         //p2 starts, player gets same somid, receives update from p1 (ReplicatePlayer) so update allMinoSceneObjectWithID
         //if we already contain the key (e.g. 5), link it with the new network player
-        if(_sceneObjectMino == null || (object)_sceneObjectMino == null)    //Unity overload the ==
+        if(_sceneObjectMino == null || (object)_sceneObjectMino == null)    //Unity overloads the ==
             return;
 
         if(allMinoSceneObjectWithID.Contains(new KeyValuePair<short, SceneObjectMino>(_itsSomid, _sceneObjectMino))){
@@ -536,8 +522,9 @@ public class MinoGameManager: SceneObject
         foreach(KeyValuePair<short, SceneObjectMino> pair in allMinoSceneObjectWithID){
             debugInitString += "\n" + pair.Key + "\tid inited "+pair.Value.GetType().ToString()+" at " + pair.Value.gameObject.name;
         }
-        CleanDebugText();
-        Debug.Log(debugInitString);
+
+        if(logInitCalls)
+            Debug.Log(debugInitString);
     }
 
     public void RemoveEmptySOMIDS(){
@@ -545,21 +532,6 @@ public class MinoGameManager: SceneObject
         foreach (var badKey in badKeys){
             allMinoSceneObjectWithID.Remove(badKey);
         }
-    }
-
-    public void LogDebuMsgsToIngame(string txt, string stackTrace, LogType type){
-        if(Debug.isDebugBuild && debugLogIngameText){
-            if(debugLogIngameText.text.Length+txt.Length > 15000)
-                CleanDebugText();
-            if(txt.Length > 15000){
-                txt = "TXT CUTTED. WAS TOO LONG: "+txt.Length;
-            }
-            debugLogIngameText.text += "\n"+txt;
-        }
-    }
-    public void CleanDebugText(){
-        if(debugLogIngameText)
-            debugLogIngameText.text = "";
     }
 
     public SceneObjectMino GetSceneObjectViaID(short id){

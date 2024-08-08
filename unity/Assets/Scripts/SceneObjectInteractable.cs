@@ -25,7 +25,6 @@ public class SceneObjectInteractable : SceneObjectMino{
 
         if(neverMoves){
             _core = GameObject.FindObjectOfType<Core>();
-            m_uiManager = _core.getManager<UIManager>();
             tr = GetComponent<Transform>();
         
             _parameterList = new List<AbstractParameter>();

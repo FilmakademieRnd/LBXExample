@@ -42,46 +42,19 @@ namespace tracer
         //!
         //! Is the sceneObject locked?
         //!
-        public bool _lock = false;
-        //!
-        //! Previous lock state for highlighting the sceneObject.
-        //!
-        private bool m_highlightLock = false;
-        //!
-        //! Is the sceneObject reacting to physics
-        //!
-        private bool _physicsActive = false;
-        //!
-        //! Is the sceneObject reacting to physics
-        //!
-        public bool physicsActive
-        {
-            get => _physicsActive;
-        }
-        //!
-        //! A reference to the scene objects gizmo.
-        //!
-        public GameObject _gizmo = null;
-        //!
-        //! A reference to the scene objects icon.
-        //!
-        public GameObject _icon = null;
-        //!
-        //! A reference to the TRACER UI manager.
-        //!
-        protected UIManager m_uiManager;
+        protected bool _lock = false;
         //!
         //! Position of the SceneObject
         //!
-        public Parameter<Vector3> position;
+        protected Parameter<Vector3> position;
         //!
         //! Rotation of the SceneObject
         //!
-        public Parameter<Quaternion> rotation;
+        protected Parameter<Quaternion> rotation;
         //!
         //! Scale of the SceneObject
         //!
-        public Parameter<Vector3> scale;
+        protected Parameter<Vector3> scale;
 
         //!
         //! Cache the transform component - its a bit faster than .transform
@@ -91,6 +64,8 @@ namespace tracer
         //! Get the transform
         //!
         public Transform getTr{ get => tr; }
+
+        public bool IsLocked(){ return _lock; }
         
         
         //### EVENTS
@@ -117,10 +92,6 @@ namespace tracer
         public override void Awake()
         {
             base.Awake();
-
-            m_uiManager = _core.getManager<UIManager>();
-
-            _physicsActive = false;
 
             tr = GetComponent<Transform>();
 

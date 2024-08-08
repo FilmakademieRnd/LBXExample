@@ -199,18 +199,12 @@ namespace tracer
             int syncTime = message[1] + runtime;
             int deltaTime = Helpers.DeltaTime(core.time, message[1], core.timesteps);
 
-            if(!core.setTimeSyncOnlyOnce || !core.syncSetOnce){
-                core.syncSetOnce = true;
-
-                if (deltaTime > 10 ||
-                    deltaTime > 3 && runtime < 8)
-                {
-                    core.time = (byte)(Mathf.RoundToInt(syncTime) % core.timesteps);
-                    UnityEngine.Debug.LogWarning("decodeSyncMessage::Core time updated to: " + core.time);
-                }
+            if (deltaTime > 10 ||
+                deltaTime > 3 && runtime < 8)
+            {
+                core.time = (byte)(Mathf.RoundToInt(syncTime) % core.timesteps);
+                UnityEngine.Debug.LogWarning("decodeSyncMessage::Core time updated to: " + core.time);
             }
-
-            //UnityEngine.Debug.Log("Time Core: " + coreTime);
         }
 
         //! 

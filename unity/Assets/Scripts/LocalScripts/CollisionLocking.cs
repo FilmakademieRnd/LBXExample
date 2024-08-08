@@ -12,7 +12,7 @@ public class CollisionLocking : MonoBehaviour{
 
     void OnCollisionEnter(Collision col){
         MinoCharacter player = col.gameObject.GetComponentInParent<MinoCharacter>();
-        if(player && sceneObjectScript._lock){
+        if(player && sceneObjectScript.IsLocked()){
             sceneObjectScript.lockObject(true);
         }
     }

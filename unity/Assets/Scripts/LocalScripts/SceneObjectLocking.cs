@@ -43,7 +43,7 @@ public class SceneObjectLocking : MonoBehaviour{
     }
 
     public void UpdateIfWeLostMaster(){
-        isMasterCalled = !GetComponentInChildren<SceneObjectMino>()._lock;  //check if one object is still not locked here
+        isMasterCalled = !GetComponentInChildren<SceneObjectMino>().IsLocked();  //check if one object is still not locked here
         if(debugLockText)
             debugLockText.text = "isMaster/unlocked\n"+isMasterCalled;
     }

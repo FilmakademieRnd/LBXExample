@@ -518,7 +518,7 @@ namespace tracer
         //!
         public void addSelectedObject(SceneObject sceneObject)
         {
-            if (!sceneObject._lock)
+            if (!sceneObject.IsLocked())
             {
                 m_selectedObjects.Add(sceneObject);
 

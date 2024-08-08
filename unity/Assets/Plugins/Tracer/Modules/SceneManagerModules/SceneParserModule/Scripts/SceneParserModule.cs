@@ -103,56 +103,22 @@ namespace tracer
                 if (light != null)
                 {
                     node = ParseLight(light);
-                    if (core.isServer && !sceneObject)
-                    {
-                        switch (light.type)
-                        {
-                            case LightType.Point:
-                                sceneObject = gameObject.AddComponent<SceneObjectPointLight>();
-                                break;
-                            case LightType.Directional:
-                                sceneObject = gameObject.AddComponent<SceneObjectDirectionalLight>();
-                                break;
-                            case LightType.Spot:
-                                sceneObject = gameObject.AddComponent<SceneObjectSpotLight>();
-                                break;
-                            case LightType.Area:
-                                sceneObject = gameObject.AddComponent<SceneObjectAreaLight>();
-                                break;
-                        }
-                        manager.sceneLightList.Add((SceneObjectLight)sceneObject);
-                        gameObject.tag = "editable";
-                    }
                 }
                 else if (trans.GetComponent<Camera>() != null)
                 {
                     node = ParseCamera(trans.GetComponent<Camera>());
-                    if (core.isServer && !sceneObject)
-                    {
-                        sceneObject = gameObject.AddComponent<SceneObjectCamera>();
-                        manager.sceneCameraList.Add((SceneObjectCamera)sceneObject);
-                        gameObject.tag = "editable";
-                    }
                 }
                 else if (trans.GetComponent<MeshFilter>() != null)
                 {
                     node = ParseMesh(trans, ref sceneData);
-                    if (gameObject.tag == "editable")
-                        if (core.isServer && !sceneObject)
-                            sceneObject = gameObject.AddComponent<SceneObject>();
                 }
                 else if (trans.GetComponent<SkinnedMeshRenderer>() != null)
                 {
                     node = ParseSkinnedMesh(trans, ref gameObjects, ref sceneData);
-                    if (gameObject.tag == "editable")
-                        if (core.isServer && !sceneObject)
-                            sceneObject = gameObject.AddComponent<SceneObject>();
                 }
                 else
                 {
-                    if (gameObject.tag == "editable")
-                        if (core.isServer && !sceneObject)
-                            sceneObject = gameObject.AddComponent<SceneObject>();
+
                 }
 
                 Animator animator = trans.GetComponent<Animator>();

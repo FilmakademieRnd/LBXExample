@@ -87,8 +87,6 @@ namespace tracer
             
             _parameterList = new List<AbstractParameter>();
             tr = GetComponent<Transform>();
-
-            m_uiManager = _core.getManager<UIManager>();
             /////////////////////////////////////////////////////////
 
             

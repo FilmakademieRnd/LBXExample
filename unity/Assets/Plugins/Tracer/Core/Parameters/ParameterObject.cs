@@ -146,7 +146,7 @@ namespace tracer
             _parameterList = new List<AbstractParameter>();
 
             _core.addParameterObject(this);
-            //Debug.Log(this.name + " [ParameterObject.Awake] _id: " + _id);
+
             LogInitialisation(System.Reflection.MethodBase.GetCurrentMethod(), "sets _id: " + _id);
         }
         //!
@@ -181,13 +181,5 @@ namespace tracer
             for(int x = 0; x<offset; x++)
                 s_id++;
         }
-
-        #if UNITY_EDITOR
-        ///network amount debug
-        public static int RPCMsgSendCount = 0;
-        public static int ParameterMsgSendCount = 0;
-
-        public static int ParameterMsgReceivedCount = 0;
-        #endif
     }
 }

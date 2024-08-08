@@ -20,18 +20,22 @@ public class SceneObjectMinoEditor : Editor
 
         GUILayout.Space(10);
 
-        if (GUILayout.Button("Lock Object"))
-        {
-            // Access the SceneObjectMino instance
-            Debug.Log(LogNetworkCalls.LogCallFromSender(System.Reflection.MethodBase.GetCurrentMethod(), "Editor Call", "sceneObjectMino"));
-            sceneObjectMino.lockObject(true);
-        }
-        
-        if (GUILayout.Button("Unock Object"))
-        {
-            // Access the SceneObjectMino instance
-            Debug.Log(LogNetworkCalls.LogCallFromSender(System.Reflection.MethodBase.GetCurrentMethod(), "Editor Call", "sceneObjectMino"));
-            sceneObjectMino.lockObject(false);
+        if(sceneObjectMino.IsLocked()){
+            GUILayout.Label("is locked via other client");
+            GUILayout.Space(10);
+            if (GUILayout.Button("Gain Lock on this client")){
+                // Access the SceneObjectMino instance
+                Debug.Log(LogNetworkCalls.LogCallFromSender(System.Reflection.MethodBase.GetCurrentMethod(), "Editor Call", "sceneObjectMino"));
+                sceneObjectMino.lockObject(true);
+            }
+        }else{
+            GUILayout.Label("is unlocked on this client");   
+            if (GUILayout.Button("Discard Lock from this client"))
+            {
+                // Access the SceneObjectMino instance
+                Debug.Log(LogNetworkCalls.LogCallFromSender(System.Reflection.MethodBase.GetCurrentMethod(), "Editor Call", "sceneObjectMino"));
+                sceneObjectMino.lockObject(false);
+            }
         }
     }
     

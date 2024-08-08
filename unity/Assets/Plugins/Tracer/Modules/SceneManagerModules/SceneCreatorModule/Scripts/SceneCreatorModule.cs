@@ -65,7 +65,6 @@ namespace tracer
         //!
         public SceneCreatorModule(string name, Manager manager) : base(name, manager)
         {
-            //if (core.isServer)
             load = false;
         }
 
@@ -75,12 +74,9 @@ namespace tracer
         protected override void Cleanup(object sender, EventArgs e)
         {
             base.Cleanup(sender, e);
-            if (!core.isServer)
-            {
-                NetworkManager networkManager = core.getManager<NetworkManager>();
-                SceneReceiverModule sceneReceiverModule = networkManager.getModule<SceneReceiverModule>();
-                sceneReceiverModule.m_sceneReceived -= CreateScene;
-            }
+            NetworkManager networkManager = core.getManager<NetworkManager>();
+            SceneReceiverModule sceneReceiverModule = networkManager.getModule<SceneReceiverModule>();
+            sceneReceiverModule.m_sceneReceived -= CreateScene;
         }
 
         //!
