@@ -27,7 +27,6 @@
 .vs/
 
 # Plugins
-/[Aa]ssets/TextMesh Pro*
 /[Aa]ssets/Scripts/Tools/ParrelSync*
 
 # Gradle cache directory
