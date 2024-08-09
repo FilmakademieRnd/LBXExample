@@ -40,8 +40,6 @@ namespace tracer
         //NEW UID FOR SCENE INITIALISATION
         [HideInInspector] public string ourGUID = "";   //will be set via MinoGUICreator/CreateGUIDs within AssetMenu "Tools/Create GUIDs"
 
-        public bool adjustChildOnLockStateChanged = false;  //not nec if the object uses the "jitterhotfix"
-
         public bool adjustPhysicsToLockState = true;    //if we are locked, switch of physics
 
         public enum InteractableNetworkBehaviourEnum{
@@ -85,17 +83,10 @@ namespace tracer
             position.hasChanged += updatePosition;
             rotation = new Parameter<Quaternion>(tr.rotation, "rotation", this);
             rotation.hasChanged += updateRotation;
-            //scale = new Parameter<Vector3>(tr.localScale, "scale", this);
-            //scale.hasChanged += updateScale;
 
-            
-            if(sendPosViaParent && !useParentingAndPosUpdates){
-                InitToUseParentingPosUpdates();
-                position.hasChanged -= updatePosition;
-            }
+            InitToUseParentingPosUpdates();
 
-            if(adjustChildOnLockStateChanged)
-                onLockStateChanged.AddListener(AdjustChildrenLockState);
+
             if(adjustPhysicsToLockState){
                 onLockStateChanged.AddListener(AdjustPhysicsToLockState);
                 //execute once at init!
@@ -106,14 +97,9 @@ namespace tracer
         //!
         //! Function called, when Unity emit it's OnDestroy event.
         //!
-        public override void OnDestroy()
-        {
+        public override void OnDestroy(){
+            currentNetworkData.hasChanged -= updateRootCharacterLocalPosAndParent;
             
-            if(useParentingAndPosUpdates)
-                currentNetworkData.hasChanged -= updateRootCharacterLocalPosAndParent;
-            
-            if(!sendPosViaParent)
-                position.hasChanged -= updatePosition;
 
             rotation.hasChanged -= updateRotation;
 
@@ -148,7 +134,6 @@ namespace tracer
             else
                 _id = oID;
 
-            //this will most likely overwrite an _id we have given earlier via Init and would result in wrong InitPersistentSOM
             if(MinoGameManager.Instance.logInitCalls)
                 LogInitialisation(System.Reflection.MethodBase.GetCurrentMethod(), "sets _id: " + _id);
 
@@ -156,39 +141,15 @@ namespace tracer
         }
 
         protected override void Update(){
-            if(!useParentingAndPosUpdates){
-                if (!_lock){
-                    if (tr.position != position.value){
-                        position.setValue(tr.position, false);
-                        emitHasChanged(position);
-                    }
-                    if (tr.rotation != rotation.value){
-                        rotation.setValue(tr.rotation, false);
-                        emitHasChanged(rotation);
-                    }
-                }
+            if (!_lock){
+                EmitNonLockedPosData();
             }else{
-                if (!_lock){
-                    EmitNonLockedPosData();
-                }else{
-                    ApplyNetworkPosDataOnLocked();
-                }
+                ApplyNetworkPosDataOnLocked();
             }
 
             if(_lock != lockStateWas){              //cannot be called from SetLock and lockObject only gets called when called from the locking-client-object
                 onLockStateChanged?.Invoke();       //e.g. also lock physics
                 lockStateWas = _lock;
-            }
-        }
-        
-        
-        private void AdjustChildrenLockState(){ //only the client who gains master state, will call this on its children (will be send over network either way!)
-            if(_lock)
-                return;
-
-            foreach(SceneObjectMino som in GetComponentsInChildren<SceneObjectMino>()){
-                if(som != this && !IsCharacter(som.gameObject)) //dont change lock on characters or child objects they hold!
-                    som.lockObject(true);
             }
         }
 
@@ -216,13 +177,11 @@ namespace tracer
         //called so we send local position if neccessary and otherwise our global position
         //its neccessary if we are a child of any object that inherits from SceneObjectMino (since it most likely can move)
         //we also send our parent updates so we have the same on every client
+        //cant be any object, because we dont track "non sceneobjectmino" gameobject with an unique id
 
         [Header("Network Parenting")]
-        private const bool sendPosViaParent = true;         //sending our position as local or global via parent we have
-
         protected Parameter<Vector4> currentNetworkData;    //Vector3 + sceneObjectID (if -1, the localPos is worldPos)
 
-        private bool useParentingAndPosUpdates = false;
         private Vector4 nonAllocVector4 = new Vector4();
         private Transform ourCurrentParentTr = null;
         private SceneObjectMino ourCurrentParentSOM = null;
@@ -233,7 +192,7 @@ namespace tracer
         private bool receivedDataOnce = false;
 
         private const bool  DISCARD_POSITION_RUNAWAYS = true;            
-        private const float DISCARD_DISTANCE = 2f;                          //how big amplitudes are allowed to from the mean
+        private const float DISCARD_DISTANCE = 2f;                        //how big amplitudes are allowed to from the mean
         private const int   DISCARD_CHECKLIST_LENGTH = 10;                //how many valid positions should be kept for mean calculation
         private const int   IGNORE_DISCARDS_IF_MORE_THAN_X_IN_ROW = 10;   //if we get more than these discards in row without a sync, sync either way!
 
@@ -241,50 +200,7 @@ namespace tracer
         private Vector3 discardPositionListSum;
         private int discardsInRow = 0;  
 
-        private void SetParentAndGetSOMID(){
-            ourCurrentParentTr = tr.parent;
-            ourCurrentParentSOM = ourCurrentParentTr?.GetComponentInParent<SceneObjectMino>();
-            currentSOMID = MinoGameManager.Instance.GetIdViaSceneObject(ourCurrentParentSOM);
-        }
-
-        //Calculate our position and ID for network transfer
-        private void CalculateNetworkData(Transform _transform){
-            if(ourCurrentParentTr != _transform.parent)         //IF WE HAVE A NEW PARENT
-                SetParentAndGetSOMID();                         //GET CORRECT VALUES
-            
-            //VALID PARENT: SEND LOCAL POS, ELSE: SEND WORLD POS (valid only if it is a SceneObjectMino object)
-            nonAllocVector4 = currentSOMID < 0 ? tr.position : ourCurrentParentTr.InverseTransformPoint(tr.position);
-            nonAllocVector4.w = currentSOMID;                   //PACK ID INTO V4   (could be optimized into byte array?)
-        }
-
-        protected void updateRootCharacterLocalPosAndParent(object sender, Vector4 posAndID){
-            receivedDataOnce = true;
-            networkDataWeReceived = posAndID;      //UPDATE THE POS
-        }
-
-        public void UpdateNetworkDataOnPlayerOnJoin(Vector4 posAndID){
-            Debug.Log("<<<<<<<<<<<<<< RECEIVED ROOT UPDATE: "+posAndID);
-            short somId = (short)posAndID.w;
-            Transform parentFromData = somId < 0 ? null : MinoGameManager.Instance.GetSceneObjectViaID(somId)?.transform;
-            if(parentFromData != null && getTr.parent != parentFromData){
-                getTr.parent = parentFromData;
-            }
-
-            currentSOMID = somId;
-            Vector3 pos = (Vector3)posAndID;
-
-            if(currentSOMID < 0 || ourCurrentParentTr == null){
-                tr.position = DiscardPositionUpdate(pos);
-            }else{
-                tr.position = DiscardPositionUpdate(ourCurrentParentTr.TransformPoint(pos));
-            }
-        }
-
-        //INIT THE HOTFIX
         protected void InitToUseParentingPosUpdates(){
-            if(useParentingAndPosUpdates)
-                return;
-                
             if(MinoGameManager.SceneObjectsInitialized){
                 CalculateNetworkData(tr);
                 currentNetworkData = new Parameter<Vector4>(nonAllocVector4, "rootCharacterLocalPosAndParent", this);
@@ -292,8 +208,6 @@ namespace tracer
                 
                 //JUST SO THAT LOCKED OBJECTS DONT START AT (0,0,0)
                 networkDataWeReceived = tr.position;
-                
-                useParentingAndPosUpdates = true;
             }else{
                 StartCoroutine(WaitForSceneObjectInitialisation());
             }
@@ -305,55 +219,46 @@ namespace tracer
             InitToUseParentingPosUpdates();
         }
 
-        protected void RemoveParentPosUpdate(){
-            //From OnDestroyEvent
-            if(useParentingAndPosUpdates)
-                currentNetworkData.hasChanged -= updateRootCharacterLocalPosAndParent;
+        protected void updateRootCharacterLocalPosAndParent(object sender, Vector4 posAndID){
+            receivedDataOnce = true;
+            networkDataWeReceived = posAndID;
         }
 
-        //USE THE HOTFIX
-        protected void EmitNonLockedPosData(){
-            if(!useParentingAndPosUpdates)    //ugly setup
-                return;
+        
+        private void CalculateNetworkData(Transform _transform){
+            if(ourCurrentParentTr != _transform.parent)         //IF WE HAVE A NEW PARENT
+                SetParentAndGetSOMID();                         //GET CORRECT VALUES
+            
+            //VALID PARENT: SEND LOCAL POS, ELSE: SEND WORLD POS (valid only if it is a SceneObjectMino object)
+            nonAllocVector4 = currentSOMID < 0 ? tr.position : ourCurrentParentTr.InverseTransformPoint(tr.position);
+            nonAllocVector4.w = currentSOMID;                   //PACK ID INTO V4   (could be optimized into byte array?)
+        }
 
+        private void SetParentAndGetSOMID(){
+            ourCurrentParentTr = tr.parent;
+            ourCurrentParentSOM = ourCurrentParentTr?.GetComponentInParent<SceneObjectMino>();
+            currentSOMID = MinoGameManager.Instance.GetIdViaSceneObject(ourCurrentParentSOM);
+        }
+   
+        protected void EmitNonLockedPosData(){
             CalculateNetworkData(tr);
 
             if (currentNetworkData.value != nonAllocVector4){
                 currentNetworkData.setValue(nonAllocVector4, false);
-
                 emitHasChanged(currentNetworkData);
             }
             
-            if (tr.rotation != rotation.value){
-                rotation.setValue(tr.rotation, false);
+            if (tr.rotation != rotation.value){             //rotation is always globally
+                rotation.setValue(tr.rotation, false);      //will be applied over the network
                 emitHasChanged(rotation);
             }
         }
 
-        public void EmitCurrentNetworkDataOnPlayerJoin(){
-            if(!useParentingAndPosUpdates)
-                return;
-
+        public void EmitCurrentNetworkDataOnPlayerJoin(){   //so even if we have no updated values, send emit it, so the joining player gets the current pos+parent
             emitHasChanged(currentNetworkData);
         }
 
-        public Vector4 GetNetworkData(){ return nonAllocVector4; }
 
-        //nec because we use GetComponentInParent in SetParentAndGetSOMID neuerdings
-        public void CheckParentByTeleport(){
-            if(!useParentingAndPosUpdates)
-                return;
-
-            //when we teleport the platform, our parent does not explicitely change, but maybe their parent SOM
-            SceneObjectMino somStillAvailable = ourCurrentParentTr?.GetComponentInParent<SceneObjectMino>();
-            if(somStillAvailable != ourCurrentParentSOM){
-                ourCurrentParentSOM = somStillAvailable;
-                currentSOMID = -1;
-                CalculateNetworkData(tr.parent);
-            }
-        }
-
-        //Called in the MinoNetworkCharacter, since they will NEVER send any values and that should always be called from All objects that are locked
         protected void ApplyNetworkPosDataOnLocked(){
             if(!receivedDataOnce)
                 return;
@@ -365,6 +270,17 @@ namespace tracer
             }else{
                 tr.position = DiscardPositionUpdate(ourCurrentParentTr.TransformPoint(networkDataWeReceived));
             }
+        }
+
+        private void ApplyParentUpdateOnLocked(){
+            if((int)networkDataWeReceived.w != currentSOMID){    //ID CHANGED
+                currentSOMID = (short)networkDataWeReceived.w;
+                //SET PARENT IF ITS A VALID TARGET, ELSE: null
+                ourCurrentParentTr = currentSOMID < 0 ? null : MinoGameManager.Instance.GetSceneObjectViaID(currentSOMID)?.transform;
+            }
+            
+            if(tr.parent != ourCurrentParentTr)
+                tr.parent = ourCurrentParentTr;
         }
 
         private Vector3 DiscardPositionUpdate(Vector3 receivedTransformPos){
@@ -391,31 +307,13 @@ namespace tracer
             discardPositionListSum /= DISCARD_CHECKLIST_LENGTH;
             if(Vector3.Distance(discardPositionListSum, receivedTransformPos) > DISCARD_DISTANCE){
                 discardsInRow++;
-                Debug.Log("DISCARD POS UPDATE. USE LATEST VALID ONE");
                 return discardCheckPositionList[^1];
             }
             discardsInRow = 0;
             discardCheckPositionList.Add(receivedTransformPos);
             discardCheckPositionList.RemoveAt(0);
             return receivedTransformPos;
-        }
-
-        private void AddDiscardPosition(Vector3 pos){
-            discardCheckPositionList.Add(pos);
-            if(discardCheckPositionList.Count == DISCARD_CHECKLIST_LENGTH)
-                discardCheckPositionList.RemoveAt(0);
-        }
-
-        private void ApplyParentUpdateOnLocked(){
-            if((int)networkDataWeReceived.w != currentSOMID){    //ID CHANGED
-                currentSOMID = (short)networkDataWeReceived.w;
-                //SET PARENT IF ITS A VALID TARGET, ELSE: null
-                ourCurrentParentTr = currentSOMID < 0 ? null : MinoGameManager.Instance.GetSceneObjectViaID(currentSOMID)?.transform;
-            }
-            
-            if(tr.parent != ourCurrentParentTr)
-                tr.parent = ourCurrentParentTr;
-        }
+        }       
         #endregion
 
     }

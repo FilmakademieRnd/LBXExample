@@ -89,8 +89,7 @@ namespace tracer
         //!
         //! Initialisation
         //!
-        public override void Awake()
-        {
+        public override void Awake(){
             base.Awake();
 
             tr = GetComponent<Transform>();
@@ -154,7 +153,7 @@ namespace tracer
         }
 
         //!
-        //! Update GameObject local position.
+        //! Update GameObject world position.
         //! @param   sender     Object calling the update function
         //! @param   a          new position value
         //!
@@ -165,7 +164,7 @@ namespace tracer
         }
 
         //!
-        //! Update GameObject local rotation.
+        //! Update GameObject world rotation.
         //! @param   sender     Object calling the update function
         //! @param   a          new rotation value
         //!
