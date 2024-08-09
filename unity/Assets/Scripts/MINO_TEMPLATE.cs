@@ -23,15 +23,13 @@ using System.Collections.Generic;
 
 public class MINO_TEMPLATE : SceneObjectMino{
 
-    public RPCParameter<bool> networkParameter;
+    private RPCParameter<bool> networkParameter;
 
     public override void Awake(){
 
         //INITIALIZE
         _core = GameObject.FindObjectOfType<Core>();
-        tr = GetComponent<Transform>();
         _sceneID = 254;
-
         _parameterList = new List<AbstractParameter>();
 
         //INIT PARAMETER

@@ -101,7 +101,7 @@ public class MinoInteractable : SceneObjectMino{
         Event_SetIsTriggered(true);
     }
     void OnTriggerExit(Collider col){
-        Event_SetIsTriggered(true);
+        Event_SetIsTriggered(false);
     }
 
     private void IsActive(){

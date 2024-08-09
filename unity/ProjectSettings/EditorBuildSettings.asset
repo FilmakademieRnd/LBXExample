@@ -11,10 +11,16 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/01_PhysicalCubes.unity
     guid: 716673e66718c754c97d180b2a1ca040
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/02_Buttons.unity
     guid: 3572570952f8f8b47accb4fbabe84583
   - enabled: 0
+    path: Assets/Scenes/03_Elevators.unity
+    guid: dce339434609b5d4f8cc9a1b7e980d36
+  - enabled: 0
+    path: Assets/Scenes/04_Spawning.unity
+    guid: bdffbfd2e7403714fa52e88e630ed570
+  - enabled: 1
     path: Assets/Scenes/05_Template.unity
     guid: 9692f9f8b1e6b0a4c9b86e3f2f7703da
   m_configObjects:

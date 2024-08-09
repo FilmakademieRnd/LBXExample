@@ -170,6 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSensitivity: 5
   lookSensitivity: 40
+  jumpStrength: 5
 --- !u!1 &8545886991608624409
 GameObject:
   m_ObjectHideFlags: 0
