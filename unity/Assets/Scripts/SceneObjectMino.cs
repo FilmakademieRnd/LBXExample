@@ -98,7 +98,8 @@ namespace tracer
         //! Function called, when Unity emit it's OnDestroy event.
         //!
         public override void OnDestroy(){
-            currentNetworkData.hasChanged -= updateRootCharacterLocalPosAndParent;
+            if(parentingInitialized)
+                currentNetworkData.hasChanged -= updateRootCharacterLocalPosAndParent;
             
 
             rotation.hasChanged -= updateRotation;
@@ -190,6 +191,7 @@ namespace tracer
         private Vector4 networkDataWeReceived;              //Vector3 + sceneObjectID (if -1, the localPos is worldPos)
         //do not update if not!
         private bool receivedDataOnce = false;
+        private bool parentingInitialized = false;
 
         private const bool  DISCARD_POSITION_RUNAWAYS = true;            
         private const float DISCARD_DISTANCE = 2f;                        //how big amplitudes are allowed to from the mean
@@ -208,6 +210,7 @@ namespace tracer
                 
                 //JUST SO THAT LOCKED OBJECTS DONT START AT (0,0,0)
                 networkDataWeReceived = tr.position;
+                parentingInitialized = true;
             }else{
                 StartCoroutine(WaitForSceneObjectInitialisation());
             }
@@ -241,6 +244,9 @@ namespace tracer
         }
    
         protected void EmitNonLockedPosData(){
+            if(!parentingInitialized)
+                return;
+
             CalculateNetworkData(tr);
 
             if (currentNetworkData.value != nonAllocVector4){

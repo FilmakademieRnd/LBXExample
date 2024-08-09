@@ -49,6 +49,7 @@ namespace tracer{
             Destroy(GetComponentInChildren<Camera>().gameObject);
             Destroy(GetComponent<Collider>());
             Destroy(GetComponent<Rigidbody>());
+            Destroy(GetComponent<SimpleCharacterController>());
         }
 
         private void UpdatePlayerColorsIngame(){

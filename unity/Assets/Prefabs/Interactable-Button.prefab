@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8949866116109487348}
   - component: {fileID: 4432605263354161260}
   m_Layer: 0
-  m_Name: Physical-Button
+  m_Name: Interactable-Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

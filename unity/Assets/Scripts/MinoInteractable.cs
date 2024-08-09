@@ -210,12 +210,16 @@ public class MinoInteractable : SceneObjectMino{
         StartCoroutine(TriggerNextDelayed_Coro(nextInteractable));
     }
     private IEnumerator TriggerNextDelayed_Coro(MinoInteractable nextInteractable){
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.5f);
         nextInteractable.Event_SetIsTriggered(true);
     }
 
+    private int colorIndex = 0;
+
     public void ChangeColorRandom(){
-        GetComponentInChildren<MeshFilter>().GetComponent<MeshRenderer>().material.color = Random.ColorHSV();
+        Color[] colors = new Color[]{Color.red, Color.green, Color.blue, Color.yellow};
+        colorIndex = (colorIndex+1) % colors.Length;
+        GetComponentInChildren<MeshFilter>().GetComponent<MeshRenderer>().material.color = colors[colorIndex]; //Random.ColorHSV();
     }
 
 
