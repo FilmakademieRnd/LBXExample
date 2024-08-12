@@ -3,7 +3,7 @@ LBX Example a sample implementation that shows how the Filmakademie [TRACER fram
 
 This example is based on a TRACER snaphot from September 14th 2023. The changes and additions to this snapshot  in order to realize the multi player network gaming functionality are the contribution of this project. Such files are identified by dedicated Header informations refering to project EMIL.
 
-Notice that this is a Unity implementation of the network components. As TRACER is engine agnostic it can used as a template to implement it to other Engines/DCCs.
+Notice that this is a Unity implementation of the network components. As TRACER is engine agnostic this work can used as a template to implement it to other Engines/DCCs.
 
 ## HowTo Video
 
